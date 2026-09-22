@@ -1,0 +1,18 @@
+Source: sdmsg
+Section: utils
+Priority: optional
+Maintainer: Lenik <sdmsg@bodz.net>
+Build-Depends: debhelper-compat (= 13), meson, ninja-build, pkgconf, libbas-c-dev, asciidoctor
+Standards-Version: 4.6.0
+Homepage: https://github.com/lenik/sdmsg
+Rules-Requires-Root: no
+
+Package: sdmsg
+Architecture: any
+Depends:
+    ${shlibs:Depends},
+    ${misc:Depends}
+Description: Simple C CLI project template with example app
+ sdmsg is a Meson-based template for small C command-line utilities
+ (no shared/static library packaging). It ships the sdmsg example
+ application, AsciiDoc man pages, bash completion, and Debian packaging.

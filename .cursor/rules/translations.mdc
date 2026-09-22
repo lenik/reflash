@@ -1,0 +1,52 @@
+---
+description: How to update gettext catalogs and document translations (agent hand-translate only; no external MT)
+globs: po/**,**/LINGUAS,man/**/*.adoc,README*,README-*.md
+alwaysApply: false
+---
+
+# Updating translations
+
+## No external translation — agent translates directly
+
+**Forbidden everywhere** (gettext, README, man, rule docs, comments, …):
+
+- Google Translate, Bing, Yandex, DeepL, or any other web MT
+- CLI wrappers: `trans`, `googletranslator`, `translate-shell`, etc.
+- Batch scripts / pipelines that call those tools
+- Shipping msgid copies, placeholders, or empty files as “translations”
+
+**You (the agent) write the translated text yourself** into `.po` msgstrs,
+`README-<locale>.md`, `man/<locale>/`, and similar. Prefer quality over
+coverage: leave English / omit a locale file rather than invent broken MT.
+
+Proxy settings in **proxy.mdc** are for ordinary network fetches, **not**
+for routing translation APIs.
+
+## gettext (`.po`)
+
+- **msgid-copy is not a translation** (exception: `msgid ""`). Empty `msgstr`
+  or `msgstr == msgid` counts as untranslated.
+- **≤20% completion** ⇒ treat the catalog as missing. Rewrite the whole `.po`
+  by hand. Do **not** write patch/sed/Python scripts to “fix” a mostly-empty
+  catalog.
+- **Incremental updates** (a few new msgids): translate them yourself, then
+  batch-apply with **`poedit`** (applies *your* strings; it is not an MT
+  engine):
+
+```bash
+poedit -l ab,de,fg <<EOT
+<msgid>	<ab>	<de>	<fg>
+<msgid>	<ab>	<de>	<fg>
+EOT
+```
+
+  Tabs separate fields. Do not feed poedit msgid copies or placeholders.
+
+## README / man / rule docs
+
+- Whole-document locale files under `man/<locale>/` and per-rule
+  `README-<locale>.md`.
+- Translate yourself. If a locale is missing, English `README.md` /
+  source adoc fallback is fine until you hand-write the locale file.
+- Do not leave empty or near-empty `README-*.md` / locale mans from failed
+  tooling runs — delete them or finish a real translation.
