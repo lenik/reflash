@@ -3,12 +3,12 @@
 pkgname=sdmsg
 pkgver=0.0.0
 pkgrel=1
-pkgdesc="Meson-based CLI template"
-arch=('any')
+pkgdesc="Refresh flash storage by rewriting device data in place"
+arch=('x86_64' 'aarch64')
 url="https://github.com/lenik/sdmsg"
 license=('AGPL-3.0-or-later')
-depends=('bash')
-makedepends=('meson' 'ninja' 'asciidoctor')
+depends=('sqlite' 'openssl' 'wxwidgets-gtk3')
+makedepends=('meson' 'ninja' 'asciidoctor' 'pkgconf')
 source=()
 sha256sums=()
 

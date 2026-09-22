@@ -9,58 +9,97 @@ v{project-version}, {project-year}
 
 == Name
 
-sdmsg - concatenate files to standard output
+sdmsg - rewrite device or file data in place (SD massage)
 
 == Synopsis
 
-*sdmsg* [_OPTION_]... [_FILE_]...
+*sdmsg* [_OPTION_]... _DEVICE/FILE_
 
 == Description
 
-Copy each _FILE_ to standard output in order.
-If _FILE_ is a single dash (*-*), read standard input at that position.
-If no _FILE_ is given, read standard input once.
+*sdmsg* rewrites a block device or regular file *in place* so flash media that
+sits unused does not lose charge and corrupt data.  Each I/O unit is read and
+written back unchanged.  Progress, speed, and ETA go to standard error.
+A wxWidgets UI is available with *--gui* when a display is present.
 
-*sdmsg* is similar in spirit to *cat*(1): it writes the concatenation of
-inputs to standard output.
+Two modes are supported:
+
+* *linear* (default) -- treat the target as a raw byte range.  If a partition
+  table is present, the table and each partition are rewritten separately.
+* *recursive* -- walk an unmounted filesystem (FAT/exFAT, NTFS, ext2/3/4) using
+  on-disk structures (not a mounted VFS) and rewrite file data plus essential
+  metadata.
+
+A SQLite database records paths, SHA-1 digests, massage/verify counts, and
+bad extents.  Partition tables and filesystem metadata use special paths such
+as `::mbr`, `::gpt`, `::part-N`, `::boot`, and `::superblock`.
+
+Rewrite always runs against an *unmounted* device and only touches allocated
+filesystem data (free space is skipped).  Compressed or encrypted NTFS data is
+rewritten as stored on disk (no decryption).  SHA-1 digests are computed
+*after* the rewrite, with the filesystem mounted (read-only is enough).  With
+*--auto-mount*, mounts are restored to their original state (including read/write).
+Without it, you are prompted to skip SHA-1 or mount read-only (`sudo`/`pkexec`);
+non-interactive runs try a RO mount unless `SDMSG_SHA1=skip`.
+
+Regular files are opened read/write without truncation.
 
 == Options
 
+*-b, --block-size* _NUM_::
+  I/O block size in bytes.  Default: auto-detect (`BLKSSZGET`, file
+  `st_blksize`, or 4096).
+
+*-d, --sqlite-db* _FILE_::
+  SQLite management database.  Default: `~/.cache/sdmsg/<name>.sqlite`.
+
+*-t, --test*::
+  Verify against the database (read + SHA-1); do not rewrite.  Always headless.
+
+*-l, --linear*::
+  Raw whole-device/file rewrite (default).
+
+*-r, --recursive*::
+  Filesystem walk and rewrite.  The device must be unmounted (or use
+  *--auto-mount*).
+
+*-m, --auto-mount*::
+  Unmount related mounts before the rewrite and restore them afterward
+  (original read/write vs read-only options are preserved).  Also used to
+  remount for the post-rewrite SHA-1 pass.
+
+*--gui*::
+  Open the wxWidgets progress window (requires `DISPLAY` or Wayland).
+
 *-v, --verbose*::
-  Print each file name (or ``standard input`` for *-*) to standard error
-  before copying that input.
-  Repeat for more verbose logging.
+  Increase logging.
 
 *-q, --quiet*::
-  Suppress messages that would be printed by *--verbose*.
-  If both *--verbose* and *--quiet* are given, *--quiet* wins.
+  Decrease logging.
 
 *-h, --help*::
-  Print a usage summary and exit successfully.
+  Show help and exit.
 
 *--version*::
-  Print version and license information and exit successfully.
+  Show version and exit.
 
 == Exit status
 
-*0*::
-  Success.
+*0*:: Success (I/O errors on individual extents may still be recorded in the DB).
+*1*:: Failure.
+*2*:: Usage error.
 
-*1*::
-  An error occurred (invalid options, unreadable file, or I/O error).
+== Notes
+
+Block devices typically require root.  Rewrite refuses mounted targets unless
+*--auto-mount* is used.  SHA-1 is computed on mounted file contents after the
+rewrite.  Free/unallocated space is not rewritten.  After a run, bad extents can
+be exported as a badblocks-style list (GUI offers a save dialog).
+
+== See also
+
+*badblocks*(8), *e2fsck*(8)
 
 == Author
 
-Written by {project-author} <{project-email}>.
-
-== Copyright
-
-Copyright (C) {project-year}.
-License AGPL-3.0-or-later.
-This is free software: you are free to change and redistribute it under the
-terms of the GNU Affero General Public License.
-There is NO WARRANTY, to the extent permitted by law.
-See the LICENSE file in the source distribution for the full license text,
-including supplemental terms stating this project opposes AI exploitation and
-AI hegemony, and rejects mindless MIT-style licensing and politically naive
-BSD-style licensing.
+{project-author} <{project-email}>

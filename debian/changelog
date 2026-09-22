@@ -1,3 +1,24 @@
+sdmsg (0.1.0) unstable; urgency=medium
+
+  * Rewrite as SD card data massage tool (wxWidgets, linear/recursive,
+    SQLite).
+  * C++/wxWidgets UI with progress grid, pause, speed/ETA, badblocks
+    export.
+  * Linear and recursive modes; FAT/exFAT, NTFS, ext2/3/4 on-disk
+    walkers.
+  * SQLite tracking of paths, SHA-1, massage/verify counts and bad
+    extents.
+  * Auto-unmount/remount (-m); headless default with optional --gui.
+  * Rewrite allocated FS data only; SHA-1 after mount; NTFS raw attrs.
+  * Add make-testbases/run-testdrive scripts and fixture README for FS
+    image tests.
+  * Fix FAT/exFAT directory chain walks so recursive mode covers all
+    files.
+  * Strengthen testdrive: content integrity, refuse-when-mounted; lint
+    cleanups.
+
+ -- Lenik (谢继雷) <lenik@bodz.net>  Tue, 22 Sep 2026 19:17:29 +0800
+
 sdmsg (0.0.1) unstable; urgency=medium
 
   * Initial release

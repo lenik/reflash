@@ -126,3 +126,6 @@ stamp-po
 stats/
 target/
 v-store
+# Large generated FS images (rebuild with scripts/make-testbases.sh)
+tests/fixtures/testbase.*
+tests/fixtures/testdrive.*

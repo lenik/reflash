@@ -7,7 +7,7 @@
 Name:           sdmsg
 Version:        %{version}
 Release:        1%{?dist}
-Summary:        Simple C CLI project template with example app
+Summary:        Refresh flash storage by rewriting device data in place
 
 License:        AGPL-3.0-or-later
 URL:            https://github.com/lenik/sdmsg
@@ -18,11 +18,15 @@ BuildRequires:  meson
 BuildRequires:  ninja-build
 BuildRequires:  pkgconf
 BuildRequires:  asciidoctor
+BuildRequires:  sqlite-devel
+BuildRequires:  openssl-devel
+BuildRequires:  wxGTK3-devel
 
 %description
-sdmsg is a Meson-based template for small C command-line utilities
-(no shared/static library packaging). It ships the sdmsg example
-application, AsciiDoc man pages, bash completion, and Debian packaging.
+sdmsg ("SD massage") rewrites block devices or regular files in place to
+fight bit-rot on flash media that sits unused. Supports linear raw rewrite
+and recursive FAT/exFAT/NTFS/ext walks with SQLite tracking and an optional
+wxWidgets progress UI.
 
 %prep
 %setup -q -n %{name}-%{srcversion}
