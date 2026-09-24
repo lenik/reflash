@@ -13,13 +13,33 @@ BUILD   := $(CURDIR)/build
 CROSS   := $(CURDIR)/meson-cross.ini
 ARTIFACT := $(OUTDIR)/$(NAME)_mingw-$(VERSION).exe
 MINGW_CC := $(shell command -v x86_64-w64-mingw32-gcc 2>/dev/null)
+MINGW_PKG_CONFIG := $(shell command -v x86_64-w64-mingw32-pkg-config 2>/dev/null)
+
+# Cross build needs the same hard deps as meson.build (sqlite3, libcrypto, wxwidgets).
+mingw_cross_deps_ok = \
+	[ -n "$(MINGW_CC)" ] && [ -n "$(MINGW_PKG_CONFIG)" ] && \
+	"$(MINGW_PKG_CONFIG)" --exists sqlite3 && \
+	"$(MINGW_PKG_CONFIG)" --exists libcrypto && \
+	("$(MINGW_PKG_CONFIG)" --exists wxwidgets || "$(MINGW_PKG_CONFIG)" --exists wx-config)
 
 .PHONY: all local stage exe clean
 
 all:
 	"$(HOST_SH)" run $(KIND) -- $(MAKE) -C "$(CURDIR)" local
 
-local: $(ARTIFACT)
+local:
+	@set -e; \
+	if [ -n "$$OS" ] && [ "$$OS" = Windows_NT ]; then \
+		$(MAKE) $(ARTIFACT); \
+	elif $(mingw_cross_deps_ok); then \
+		$(MAKE) $(ARTIFACT); \
+	elif [ -n "$(MINGW_CC)" ]; then \
+		echo "mingw: skip (cross toolchain present but sqlite3/libcrypto/wxwidgets not found via pkg-config)" >&2; \
+		mkdir -p "$(OUTDIR)"; \
+	else \
+		echo "mingw: need MSYS/MinGW or x86_64-w64-mingw32-gcc with deps" >&2; \
+		exit 1; \
+	fi
 
 stage:
 	rm -rf "$(STAGE)" "$(BUILD)"
@@ -28,10 +48,10 @@ stage:
 	cd "$(SRCDIR)"; \
 	if [ -n "$$OS" ] && [ "$$OS" = Windows_NT ]; then \
 		meson setup "$(BUILD)" --prefix=/ --buildtype=release; \
-	elif [ -n "$(MINGW_CC)" ]; then \
+	elif $(mingw_cross_deps_ok); then \
 		meson setup "$(BUILD)" --cross-file "$(CROSS)" --prefix=/ --buildtype=release; \
 	else \
-		echo "mingw: need MSYS/MinGW or x86_64-w64-mingw32-gcc" >&2; \
+		echo "mingw: need MSYS/MinGW or x86_64-w64-mingw32-gcc with deps" >&2; \
 		exit 1; \
 	fi
 	meson compile -C "$(BUILD)"
