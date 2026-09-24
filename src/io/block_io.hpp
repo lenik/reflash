@@ -8,6 +8,8 @@
 #include "engine/pause.hpp"
 #include "engine/progress.hpp"
 #include "io/device.hpp"
+#include "io/page_cache.hpp"
+#include "options.hpp"
 
 #include <cstdint>
 #include <functional>
@@ -31,14 +33,21 @@ struct BlockIoResult {
     std::vector<RewriteExtent> errors;
 };
 
+struct RewriteFlags {
+    bool verify_only = false;
+    WriteCacheMode write_cache = WriteCacheMode::Cachestat;
+    bool verify_writes = false;
+    /* Poll Cached→Ok every this many ms (default 780). */
+    int flush_poll_ms = 780;
+};
+
 /*
  * Read-each-block then write-back same bytes over [offset, offset+length).
- * Pausable only between blocks. Does not truncate. Does not compute SHA-1
- * (that happens after remount via the VFS).
- * If verify_only, only read (no write) — used for dry I/O checks.
+ * WriteThrough: O_DIRECT/fdatasync, cells → Ok.
+ * Cachestat/Mincore: cells → Cached, poll flush every ~0.78s → Ok.
  */
 BlockIoResult rewrite_range(Device &dev, std::uint64_t offset, std::uint64_t length,
-                            std::uint64_t block_size, bool verify_only, PauseControl &pause,
+                            std::uint64_t block_size, RewriteFlags flags, PauseControl &pause,
                             Progress &progress, const std::string &object_path);
 
 } /* namespace sdmsg */

@@ -7,31 +7,43 @@
 #include "gui/app.hpp"
 #include "gui/main_frame.hpp"
 
+#include <cstdlib>
+#include <wx/image.h>
 #include <wx/wx.h>
 
 namespace sdmsg {
 
-std::shared_ptr<MassageEngine> g_gui_engine;
+Options g_gui_opts;
+
+static void ensure_image_handlers() {
+    auto add = [](wxImageHandler *h, wxBitmapType t) {
+        if (!wxImage::FindHandler(t))
+            wxImage::AddHandler(h);
+        else
+            delete h;
+    };
+    add(new wxPNGHandler(), wxBITMAP_TYPE_PNG);
+    add(new wxJPEGHandler(), wxBITMAP_TYPE_JPEG);
+    add(new wxGIFHandler(), wxBITMAP_TYPE_GIF);
+    add(new wxBMPHandler(), wxBITMAP_TYPE_BMP);
+    add(new wxXPMHandler(), wxBITMAP_TYPE_XPM);
+    add(new wxTIFFHandler(), wxBITMAP_TYPE_TIFF);
+}
 
 class SdmsgApp : public wxApp {
 public:
     bool OnInit() override {
-        if (!g_gui_engine)
-            return false;
-        wxImage::AddHandler(new wxPNGHandler());
-        auto *frame = new MainFrame(g_gui_engine);
+        ensure_image_handlers();
+        auto *frame = new MainFrame(g_gui_opts);
         frame->Show(true);
-        std::string err;
-        if (!g_gui_engine->start(&err)) {
-            wxMessageBox(err, "sdmsg", wxOK | wxICON_ERROR);
-            return false;
-        }
         return true;
     }
 };
 
-int run_gui(std::shared_ptr<MassageEngine> engine, int &argc, char **argv) {
-    g_gui_engine = std::move(engine);
+int run_gui(Options opts, int &argc, char **argv) {
+    /* Avoid dbind accessibility-bus timeout spam when AT-SPI is broken/slow. */
+    setenv("NO_AT_BRIDGE", "1", 0);
+    g_gui_opts = std::move(opts);
     wxApp::SetInstance(new SdmsgApp());
     return wxEntry(argc, argv);
 }

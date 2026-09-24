@@ -72,10 +72,15 @@ sdmsg_sources = [
     'src/engine/massage.cpp',
     'src/engine/sha1_pass.cpp',
     'src/io/device.cpp',
+    'src/io/devices.cpp',
     'src/io/partition.cpp',
     'src/io/block_io.cpp',
+    'src/io/page_cache.cpp',
     'src/db/store.cpp',
     'src/mount/automount.cpp',
+    'src/mount/userns.cpp',
+    'src/mount/fuse_user.cpp',
+    'src/mount/host_priv.cpp',
     'src/fs/detect.cpp',
     'src/fs/fat.cpp',
     'src/fs/exfat.cpp',
@@ -83,7 +88,10 @@ sdmsg_sources = [
     'src/fs/ext.cpp',
     'src/gui/app.cpp',
     'src/gui/main_frame.cpp',
+    'src/gui/browser.cpp',
     'src/gui/grid_panel.cpp',
+    'src/gui/log_panel.cpp',
+    'src/gui/session.cpp',
 ]
 
 sdmsg_deps = [sqlite_dep, crypto_dep, wx_dep]

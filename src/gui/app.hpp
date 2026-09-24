@@ -5,12 +5,10 @@
  */
 #pragma once
 
-#include "engine/massage.hpp"
-
-#include <memory>
+#include "options.hpp"
 
 namespace sdmsg {
 
-int run_gui(std::shared_ptr<MassageEngine> engine, int &argc, char **argv);
+int run_gui(Options opts, int &argc, char **argv);
 
 } /* namespace sdmsg */

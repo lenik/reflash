@@ -1,3 +1,86 @@
+sdmsg (1.0.0) unstable; urgency=medium
+
+  * GUI: launch without target; menubar/toolbar/statusbar; device
+    picker.
+  * Prefer udisks/FUSE for image SHA-1 mounts; fakeroot cannot grant
+    real mount caps.
+  * GUI: -g short option; Start before Pause (re-enable after stop);
+    Edit menu (On raw disk / On Files / Preferences).
+  * Use wxStatusBar with a work-state icon. Log view is a filterable
+    table (icon, time, level, message).
+  * Restore Start/Pause/Stop toolbar buttons. Status leaves "Starting"
+    when the run advances or fails, and the scan grid stays visible.
+  * Remember the last opened file, device, and database and reopen them
+    on the next GUI launch.
+  * Add a GUI end-to-end test that drives a throwaway file.
+  * SHA-1 of a regular file or loop device mounts read-only with FUSE
+    and no longer asks.
+  * GUI never prompts on the terminal. SHA-1 runs only when a database
+    is enabled. Log level lives in the View menu. Close clears the
+    grid. Edit has Dry-run (read-only scan). Restart repaints the grid.
+  * Database Open can create a new file. File Browser uses the current
+    target (FUSE/udisks mount). Sync adds SHA-1 for new files, drops
+    dangling rows, and asks on conflicts. MIME icons; Open / Open as.
+  * Toolbar: Drive / Manifest / Start / Pause / Stop / Browser / About.
+    Drive and Manifest are sticky toggles. File and Database menus match.
+    View Logging level submenu (Error..Trace). Conflict dialog can apply
+    to the rest and remember.
+  * Browser mounts the current Drive (FUSE/udisks, partition offset when
+    needed) before showing files.
+  * Edit: Write through (O_DIRECT/fdatasync). Without it, grid cells stay
+    blue until flushed (cachestat / sync_file_range) then green. Verify
+    writes re-reads via O_DIRECT (never page-cache compare).
+  * GUI logs also go to stdout. SHA-1 FUSE mounts detect the filesystem
+    first (ext4 no longer falls through to ntfs-3g in the error text).
+  * Without Write through, do not force per-block writeback (was making
+    cache path as slow as sync). Rewrite end logs stats; one fdatasync
+    then Cached→Ok. FUSE EPERM explains missing setuid fusermount.
+  * Status bar: icons on phase/pct/rate/eta/cells/db fields. Clarify
+    fuse2fs -o fakeroot cannot grant mount privilege.
+  * When host FUSE mount fails with EPERM, enter a user+mount namespace
+    and retry (fuse2fs/ntfs-3g work without setuid fusermount).
+  * Enter user mount namespace at process start (before threads) so GUI
+    FUSE works. Without Write through, do not fdatasync after rewrite
+    (keeps cache speed; cells stay blue until flushed).
+  * Rewrite: drop per-block cachestat (O(n^2) snail). Browser list shows
+    SHA-1; skip virtual MIME icon paths that are not real files.
+  * Edit write-cache mode (radio): Write through / cachestat (default) /
+    mincore; flush probe every 0.78s.
+  * After rewrite, keep flushing/polling until Cached cells turn green.
+    Browser: do not list root DB under unknown folders (lost+found).
+  * After rewrite (~1s without Write through), full-disk sync runs on a
+    background thread; the worker keeps polling/heartbeat until sync ends,
+    then all cells turn green without re-query (avoids UI freeze on sync).
+  * Preferences: SHA-1 days, block size, write-cache mode, flush poll
+    interval, verify writes, dry-run, run mode.
+  * Prefer already-mounted device-root manifest.db unless -d was given.
+    Database → DB Admin launches sqlitebrowser. Menu items use icons.
+    Suggests: sqlitebrowser.
+  * Enter user+mount namespace before threads so Browse can FUSE-mount when
+    host fusermount returns EPERM. Manifest menu: Create default / Use
+    external SQLite / Close / User mounts / Validate / Browse / SQLite admin.
+    alert_box mirrors dialogs to stderr.
+  * Validate: rebuild file paths for extent orphan check (no file.path);
+    subtitle wraps with dialog width. Quiet AT-SPI dbind warnings in GUI.
+  * Validate dialog: re-run via bottom-left Validate. User mounts buttons
+    pin to dialog bottom. Host privilege agent (before userns) so Apply /
+    Turn off work despite sudo audit plugin. Files status: scanned
+    files/bytes, record count, field icons, work indicator.
+  * Files browser View menu: hidden files, thumbnails, arrange, zoom,
+    Icon/List/Compact (menu + top-right switchers); Ctrl+wheel zooms.
+  * File/toolbar: Eject and Safely Remove (both close the drive; close
+    in-drive manifest first). Close also closes a manifest on the drive.
+  * GUI privileges: pkexec only (no sudo); stable script path; run Apply
+    off the UI thread with wxYield so the polkit dialog stays usable.
+    Drop User mounts from the main toolbar. Browser: icon-only view
+    switchers (3×3 grid), row-major icon view, XPM thumbs, refresh keeps
+    selection, safer tree keyboard navigation.
+  * Warn before switching Raw → Files mode. Persist browser view options
+    and Preferences under ~/.config/sdtouch/ (auto-rewrite window
+    default 6 months).
+
+ -- Lenik (谢继雷) <lenik@bodz.net>  Wed, 23 Sep 2026 23:35:00 +0800
+
 sdmsg (0.1.0) unstable; urgency=medium
 
   * Rewrite as SD card data massage tool (wxWidgets, linear/recursive,

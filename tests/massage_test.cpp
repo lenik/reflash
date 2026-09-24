@@ -57,14 +57,27 @@ static void test_linear_no_truncate() {
         std::string payload(64 * 4096, '\x5a');
         out.write(payload.data(), static_cast<std::streamsize>(payload.size()));
     }
-    struct stat st_before {};
-    CHECK(stat(img.c_str(), &st_before) == 0, "stat before");
-
     sdmsg::Options opts;
     opts.target = img;
     opts.sqlite_db = db;
     opts.block_size = 4096;
     opts.mode = sdmsg::RunMode::Linear;
+    opts.dry_run = true;
+    {
+        struct stat st_dry {};
+        CHECK(stat(img.c_str(), &st_dry) == 0, "stat before dry-run");
+        sdmsg::MassageEngine dry(opts);
+        CHECK(dry.run() == 0, "dry-run");
+        struct stat st_dry_after {};
+        CHECK(stat(img.c_str(), &st_dry_after) == 0, "stat after dry-run");
+        CHECK(st_dry.st_mtim.tv_sec == st_dry_after.st_mtim.tv_sec &&
+                  st_dry.st_mtim.tv_nsec == st_dry_after.st_mtim.tv_nsec,
+              "dry-run left the file untouched");
+    }
+    opts.dry_run = false;
+
+    struct stat st_before {};
+    CHECK(stat(img.c_str(), &st_before) == 0, "stat before");
     sdmsg::MassageEngine eng(opts);
     int rc = eng.run();
     CHECK(rc == 0, "linear run");
@@ -180,7 +193,6 @@ static void test_ext_scan() {
 }
 
 int main() {
-    setenv("SDMSG_SHA1", "skip", 1); /* image tests: no privileged loop-mount */
     test_linear_no_truncate();
     test_fat_scan_and_rewrite();
     test_ext_scan();

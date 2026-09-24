@@ -21,6 +21,7 @@ Architecture: any
 Depends:
     ${shlibs:Depends},
     ${misc:Depends}
+Suggests: sqlitebrowser
 Description: Refresh flash storage by rewriting device data in place
  sdmsg ("SD massage") rewrites block devices or regular files in place to
  fight bit-rot on flash media that sits unused. Supports linear raw rewrite

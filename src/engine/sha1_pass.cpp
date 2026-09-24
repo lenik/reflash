@@ -116,14 +116,8 @@ bool sha1_mounted_files(Store &store, const std::vector<MountRecord> &mounts, Pr
         }
     }
 
+    /* Do not progress.reset() here: that wipes the massage cell map. */
     progress.set_phase("sha1");
-    std::uint64_t n = 0;
-    for (const auto &kv : todo) {
-        (void)kv;
-        n++;
-    }
-    /* Progress is byte-oriented; use file count as pseudo-bytes. */
-    progress.reset(n ? n : 1, 1);
 
     for (const auto &kv : todo) {
         const std::string &db_path = kv.first;

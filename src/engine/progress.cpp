@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <ctime>
 
 namespace sdmsg {
 
@@ -43,11 +44,13 @@ void Progress::reset(std::uint64_t total_bytes, std::uint64_t block_size) {
     paused_ = false;
     finished_ = false;
     failed_ = false;
+    input_locked_ = false;
     phase_.clear();
     logs_.clear();
     pending_logs_.clear();
     last_bytes_ = 0;
     last_time_ = now_sec();
+    start_time_ = last_time_;
 }
 
 void Progress::set_phase(const std::string &phase) {
@@ -94,10 +97,18 @@ void Progress::mark_cell_locked(std::uint64_t offset, std::uint64_t length, Cell
     std::uint64_t end = (offset + (length ? length : 1) - 1) / cell_size_;
     for (std::uint64_t i = start; i <= end && i < cells_.size(); ++i) {
         CellStatus cur = cells_[static_cast<size_t>(i)];
-        if (st == CellStatus::ReadErr || st == CellStatus::WriteErr)
+        if (st == CellStatus::ReadErr || st == CellStatus::WriteErr) {
             cells_[static_cast<size_t>(i)] = st;
-        else if (cur == CellStatus::Pending || cur == CellStatus::Ok)
+        } else if (st == CellStatus::Ok) {
+            /* Pending / Cached → Ok; never clear an error. */
+            if (cur == CellStatus::Pending || cur == CellStatus::Cached || cur == CellStatus::Ok)
+                cells_[static_cast<size_t>(i)] = CellStatus::Ok;
+        } else if (st == CellStatus::Cached) {
+            if (cur == CellStatus::Pending || cur == CellStatus::Cached)
+                cells_[static_cast<size_t>(i)] = CellStatus::Cached;
+        } else if (cur == CellStatus::Pending) {
             cells_[static_cast<size_t>(i)] = st;
+        }
     }
 }
 
@@ -109,10 +120,30 @@ void Progress::mark_cell(std::uint64_t offset, std::uint64_t length, CellStatus 
 void Progress::log(std::uint64_t offset, std::uint64_t length, CellStatus st,
                    const std::string &msg) {
     std::lock_guard<std::mutex> lock(mu_);
-    LogEntry e{offset, length, msg, st};
+    LogEntry e;
+    e.offset = offset;
+    e.length = length;
+    e.message = msg;
+    e.status = st;
+    e.time_sec = static_cast<std::int64_t>(std::time(nullptr));
+    if (st == CellStatus::ReadErr || st == CellStatus::WriteErr)
+        e.level = LogLevel::Error;
+    else
+        e.level = LogLevel::Info;
     logs_.push_back(e);
-    pending_logs_.push_back(e);
+    pending_logs_.push_back(std::move(e));
     mark_cell_locked(offset, length, st);
+}
+
+void Progress::message(LogLevel level, const std::string &msg) {
+    std::lock_guard<std::mutex> lock(mu_);
+    LogEntry e;
+    e.message = msg;
+    e.level = level;
+    e.status = CellStatus::Ok;
+    e.time_sec = static_cast<std::int64_t>(std::time(nullptr));
+    logs_.push_back(e);
+    pending_logs_.push_back(std::move(e));
 }
 
 void Progress::set_paused(bool v) {
@@ -120,12 +151,75 @@ void Progress::set_paused(bool v) {
     paused_ = v;
 }
 
+void Progress::note_restart() {
+    std::lock_guard<std::mutex> lock(mu_);
+    finished_ = false;
+    failed_ = false;
+    paused_ = false;
+    input_locked_ = false;
+    bytes_done_ = 0;
+    rate_ = 0.0;
+    eta_ = -1.0;
+    phase_ = "prepare";
+    start_time_ = now_sec();
+    last_time_ = start_time_;
+    last_bytes_ = 0;
+    for (CellStatus &c : cells_)
+        c = CellStatus::Pending;
+}
+
+void Progress::upgrade_cached_to_ok() {
+    std::lock_guard<std::mutex> lock(mu_);
+    for (CellStatus &c : cells_) {
+        if (c == CellStatus::Cached)
+            c = CellStatus::Ok;
+    }
+}
+
+size_t Progress::count_cells(CellStatus st) const {
+    std::lock_guard<std::mutex> lock(mu_);
+    size_t n = 0;
+    for (CellStatus c : cells_) {
+        if (c == st)
+            ++n;
+    }
+    return n;
+}
+
+double Progress::elapsed_sec() const {
+    std::lock_guard<std::mutex> lock(mu_);
+    if (start_time_ <= 0.0)
+        return 0.0;
+    return now_sec() - start_time_;
+}
+
+std::uint64_t Progress::bytes_done() const {
+    std::lock_guard<std::mutex> lock(mu_);
+    return bytes_done_;
+}
+
+std::uint64_t Progress::bytes_total() const {
+    std::lock_guard<std::mutex> lock(mu_);
+    return bytes_total_;
+}
+
 void Progress::set_finished(bool failed) {
     std::lock_guard<std::mutex> lock(mu_);
     finished_ = true;
     failed_ = failed;
+    input_locked_ = false;
     if (!failed)
         bytes_done_ = bytes_total_;
+}
+
+void Progress::set_input_locked(bool v) {
+    std::lock_guard<std::mutex> lock(mu_);
+    input_locked_ = v;
+}
+
+bool Progress::input_locked() const {
+    std::lock_guard<std::mutex> lock(mu_);
+    return input_locked_;
 }
 
 ProgressSnapshot Progress::snapshot() const {
@@ -138,6 +232,7 @@ ProgressSnapshot Progress::snapshot() const {
     s.paused = paused_;
     s.finished = finished_;
     s.failed = failed_;
+    s.input_locked = input_locked_;
     s.phase = phase_;
     s.cells = cells_;
     s.cell_size = cell_size_;

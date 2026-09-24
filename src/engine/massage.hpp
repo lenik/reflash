@@ -25,6 +25,8 @@ public:
     Progress &progress() { return progress_; }
     PauseControl &pause() { return pause_; }
     Store &store() { return store_; }
+    const Options &options() const { return opts_; }
+    void set_options(Options opts) { opts_ = std::move(opts); }
 
     bool start(std::string *err = nullptr);
     void join();

@@ -14,25 +14,25 @@
 
 namespace sdmsg {
 
-enum { OPT_VERSION = 256, OPT_GUI = 257 };
+enum { OPT_VERSION = 256 };
 
 void print_usage(FILE *out) {
-    fputs("Usage: sdmsg [OPTIONS] DEVICE/FILE\n"
+    fputs("Usage: sdmsg [OPTIONS] [DEVICE/FILE]\n"
           "Rewrite device/file data in place to refresh flash storage (\"massage\").\n"
           "\n"
           "  -b, --block-size NUM   I/O block size (default: auto-detect)\n"
           "  -d, --sqlite-db FILE   SQLite management database\n"
           "  -t, --test             Verify against DB (no rewrite)\n"
           "  -l, --linear           Raw whole-device/file rewrite (default)\n"
-          "  -r, --recursive        Filesystem walk/rewrite (must be unmounted)\n"
-          "  -m, --auto-mount       Unmount before run; remount after\n"
-          "      --gui              Open wxWidgets UI (requires a display)\n"
+          "  -r, --recursive        Filesystem walk/rewrite (unmounted automatically)\n"
+          "  -g, --gui              Open wxWidgets UI (requires a display)\n"
           "  -v, --verbose          More logging\n"
           "  -q, --quiet            Less logging\n"
           "  -h, --help             Show this help\n"
           "      --version          Show version\n"
           "\n"
-          "Headless by default. Progress goes to stderr. Use --gui for the window.\n",
+          "Headless by default (DEVICE/FILE required). Progress goes to stderr.\n"
+          "With -g/--gui, DEVICE/FILE is optional; open a target from the File menu.\n",
           out);
     fprintf(out, "Report bugs to: <%s>\n", PROJECT_EMAIL);
 }
@@ -52,8 +52,7 @@ bool parse_options(int argc, char **argv, Options &out) {
         {"test", no_argument, nullptr, 't'},
         {"linear", no_argument, nullptr, 'l'},
         {"recursive", no_argument, nullptr, 'r'},
-        {"auto-mount", no_argument, nullptr, 'm'},
-        {"gui", no_argument, nullptr, OPT_GUI},
+        {"gui", no_argument, nullptr, 'g'},
         {"verbose", no_argument, nullptr, 'v'},
         {"quiet", no_argument, nullptr, 'q'},
         {"help", no_argument, nullptr, 'h'},
@@ -63,7 +62,7 @@ bool parse_options(int argc, char **argv, Options &out) {
 
     optind = 1;
     for (;;) {
-        int c = getopt_long(argc, argv, "b:d:tlrmvqh", long_opts, nullptr);
+        int c = getopt_long(argc, argv, "b:d:tlrgvqh", long_opts, nullptr);
         if (c == -1)
             break;
         switch (c) {
@@ -79,6 +78,7 @@ bool parse_options(int argc, char **argv, Options &out) {
         }
         case 'd':
             out.sqlite_db = optarg;
+            out.sqlite_db_explicit = true;
             break;
         case 't':
             out.action = Action::Test;
@@ -89,10 +89,7 @@ bool parse_options(int argc, char **argv, Options &out) {
         case 'r':
             out.mode = RunMode::Recursive;
             break;
-        case 'm':
-            out.auto_mount = true;
-            break;
-        case OPT_GUI:
+        case 'g':
             out.gui = true;
             break;
         case 'v':
@@ -114,6 +111,8 @@ bool parse_options(int argc, char **argv, Options &out) {
     }
 
     if (optind >= argc) {
+        if (out.gui)
+            return true; /* idle GUI: open target from menus */
         fprintf(stderr, "sdmsg: missing DEVICE/FILE\n");
         print_usage(stderr);
         return false;

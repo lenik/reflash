@@ -13,14 +13,15 @@ sdmsg - rewrite device or file data in place (SD massage)
 
 == Synopsis
 
-*sdmsg* [_OPTION_]... _DEVICE/FILE_
+*sdmsg* [_OPTION_]... [_DEVICE/FILE_]
 
 == Description
 
 *sdmsg* rewrites a block device or regular file *in place* so flash media that
 sits unused does not lose charge and corrupt data.  Each I/O unit is read and
 written back unchanged.  Progress, speed, and ETA go to standard error.
-A wxWidgets UI is available with *--gui* when a display is present.
+A wxWidgets UI is available with *--gui* when a display is present; with
+*--gui*, _DEVICE/FILE_ may be omitted and opened from the File menu.
 
 Two modes are supported:
 
@@ -37,10 +38,14 @@ as `::mbr`, `::gpt`, `::part-N`, `::boot`, and `::superblock`.
 Rewrite always runs against an *unmounted* device and only touches allocated
 filesystem data (free space is skipped).  Compressed or encrypted NTFS data is
 rewritten as stored on disk (no decryption).  SHA-1 digests are computed
-*after* the rewrite, with the filesystem mounted (read-only is enough).  With
-*--auto-mount*, mounts are restored to their original state (including read/write).
-Without it, you are prompted to skip SHA-1 or mount read-only (`sudo`/`pkexec`);
-non-interactive runs try a RO mount unless `SDMSG_SHA1=skip`.
+*after* the rewrite, with the filesystem mounted (read-only is enough).  Existing
+mounts are always unmounted for the rewrite and restored afterward (including
+read/write).  SHA-1 runs when a database is in use: always in headless mode,
+and in the GUI only after Database → Open.  The GUI never prompts on the
+terminal.  A regular file or loop device is mounted read-only with FUSE.  A
+real disk uses udisks, then `sudo`/`pkexec`.  (*fakeroot* cannot grant
+`CAP_SYS_ADMIN` and does not help.)  Edit → Dry-run reads the scan and does
+not write.
 
 Regular files are opened read/write without truncation.
 
@@ -60,16 +65,12 @@ Regular files are opened read/write without truncation.
   Raw whole-device/file rewrite (default).
 
 *-r, --recursive*::
-  Filesystem walk and rewrite.  The device must be unmounted (or use
-  *--auto-mount*).
+  Filesystem walk and rewrite.  Related mounts are unmounted first and restored
+  afterward.
 
-*-m, --auto-mount*::
-  Unmount related mounts before the rewrite and restore them afterward
-  (original read/write vs read-only options are preserved).  Also used to
-  remount for the post-rewrite SHA-1 pass.
-
-*--gui*::
-  Open the wxWidgets progress window (requires `DISPLAY` or Wayland).
+*-g, --gui*::
+  Open the wxWidgets window (requires `DISPLAY` or Wayland).  _DEVICE/FILE_
+  is optional; use File → Open / Device, then Start.
 
 *-v, --verbose*::
   Increase logging.
@@ -91,10 +92,13 @@ Regular files are opened read/write without truncation.
 
 == Notes
 
-Block devices typically require root.  Rewrite refuses mounted targets unless
-*--auto-mount* is used.  SHA-1 is computed on mounted file contents after the
-rewrite.  Free/unallocated space is not rewritten.  After a run, bad extents can
-be exported as a badblocks-style list (GUI offers a save dialog).
+Block devices typically require root.  Related mounts are unmounted for the
+rewrite and restored afterward.  SHA-1 is computed on mounted file contents
+after the rewrite.  Free/unallocated space is not rewritten.  After a run, bad
+extents can be exported as a badblocks-style list (GUI offers a save dialog).
+One SQLite file can hold several devices (`device`, `volume`, `object`,
+`folder`, `file`).  A stored SHA-1 stays valid for 183 days unless Preferences
+changes that.
 
 == See also
 

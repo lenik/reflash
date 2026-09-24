@@ -14,6 +14,10 @@ public:
     void pause() { paused_.store(true, std::memory_order_release); }
     void resume() { paused_.store(false, std::memory_order_release); }
     void request_stop() { stop_.store(true, std::memory_order_release); }
+    void reset() {
+        paused_.store(false, std::memory_order_release);
+        stop_.store(false, std::memory_order_release);
+    }
     bool stop_requested() const { return stop_.load(std::memory_order_acquire); }
     bool is_paused() const { return paused_.load(std::memory_order_acquire); }
 

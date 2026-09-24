@@ -7,6 +7,8 @@
 #include "options.hpp"
 #include "engine/massage.hpp"
 #include "gui/app.hpp"
+#include "mount/host_priv.hpp"
+#include "mount/userns.hpp"
 #include "config.h"
 
 extern "C" {
@@ -66,6 +68,28 @@ int main(int argc, char **argv) {
     if (!sdmsg::parse_options(argc, argv, opts))
         return 2;
 
+    /*
+     * Host privilege agent must start before the user+mount namespace: pkexec
+     * breaks inside the userns. Mark GUI before fork so the agent never falls
+     * back to an invisible sudo password prompt.
+     */
+    if (opts.gui)
+        sdmsg::set_host_priv_gui(true);
+    if (!sdmsg::start_host_priv_agent() && opts.verbosity > 0)
+        fprintf(stderr, "sdmsg: host privilege agent failed to start\n");
+
+    /*
+     * Enter a user+mount namespace while still single-threaded so later FUSE
+     * mounts (fuse2fs, …) can retry with CAP_SYS_ADMIN in-ns after host
+     * fusermount EPERM. Must happen before wx/worker threads (unshare NEWUSER
+     * then returns EINVAL). Sets GIO_USE_VFS=local to avoid GVFS D-Bus noise.
+     */
+    {
+        std::string ns_err;
+        if (!sdmsg::ensure_user_mount_ns(&ns_err) && opts.verbosity > 0)
+            fprintf(stderr, "sdmsg: user mount namespace: %s\n", ns_err.c_str());
+    }
+
     auto engine = std::make_shared<sdmsg::MassageEngine>(opts);
 
     bool want_gui = opts.gui && opts.action != sdmsg::Action::Test;
@@ -75,7 +99,13 @@ int main(int argc, char **argv) {
     }
 
     if (want_gui)
-        return sdmsg::run_gui(engine, argc, argv);
+        return sdmsg::run_gui(opts, argc, argv);
+
+    if (opts.target.empty()) {
+        fprintf(stderr, "sdmsg: missing DEVICE/FILE\n");
+        sdmsg::print_usage(stderr);
+        return 2;
+    }
 
     std::string err;
     if (!engine->start(&err)) {

@@ -16,7 +16,7 @@ _sdmsg()
 	esac
 
 	if [[ $cur == -* ]]; then
-		COMPREPLY=($(compgen -W '--block-size --sqlite-db --test --linear --recursive --auto-mount --gui --verbose --quiet --help --version -b -d -t -l -r -m -v -q -h' -- "$cur"))
+		COMPREPLY=($(compgen -W '--block-size --sqlite-db --test --linear --recursive --gui --verbose --quiet --help --version -b -d -t -l -r -g -v -q -h' -- "$cur"))
 		return
 	fi
 
