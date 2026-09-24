@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -13,7 +13,7 @@
 #include <cstring>
 #include <vector>
 
-namespace sdmsg {
+namespace reflash {
 
 const char *fs_type_name(FsType t) {
     switch (t) {
@@ -141,4 +141,4 @@ bool scan_filesystem(Device &dev, std::uint64_t base_offset, FsType type, FsScan
     }
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

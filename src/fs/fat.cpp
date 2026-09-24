@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -12,7 +12,7 @@
 #include <set>
 #include <vector>
 
-namespace sdmsg {
+namespace reflash {
 
 namespace {
 
@@ -274,4 +274,4 @@ bool scan_fat(Device &dev, std::uint64_t base, FsType type, FsScanResult &out) {
     return walk_dir(dev, g, fat, 0, true, "", out);
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

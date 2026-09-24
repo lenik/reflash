@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -15,7 +15,7 @@
 #include <wx/fileconf.h>
 #include <wx/string.h>
 
-namespace sdmsg {
+namespace reflash {
 
 namespace {
 
@@ -43,20 +43,20 @@ std::string legacy_gui_session_path() {
     const char *home = std::getenv("HOME");
     if (!home || !home[0])
         return {};
-    return std::string(home) + "/.config/sdmsg/gui.ini";
+    return std::string(home) + "/.config/reflash/gui.ini";
 }
 
 } /* namespace */
 
 std::string config_dir() {
-    if (const char *env = std::getenv("SDMSG_CONFIG")) {
+    if (const char *env = std::getenv("REFLASH_CONFIG")) {
         if (env[0]) {
             mkdir_p(env);
             return env;
         }
     }
     const char *home = std::getenv("HOME");
-    std::string dir = home ? std::string(home) + "/.config/sdtouch" : "/tmp/sdtouch";
+    std::string dir = home ? std::string(home) + "/.config/reflash" : "/tmp/reflash";
     if (home)
         mkdir_p(std::string(home) + "/.config");
     mkdir_p(dir);
@@ -64,24 +64,24 @@ std::string config_dir() {
 }
 
 std::string gui_session_path() {
-    if (const char *env = std::getenv("SDMSG_SESSION")) {
+    if (const char *env = std::getenv("REFLASH_SESSION")) {
         if (env[0])
             return env;
     }
-    return config_dir() + "/sdmsg.ini";
+    return config_dir() + "/reflash.ini";
 }
 
 void restore_gui_session(Options &opts, bool keep_target, bool keep_db) {
     std::string path = gui_session_path();
     if (!path_exists(path)) {
-        /* One-time migration from the old sdmsg config location. */
+        /* One-time migration from the old reflash config location. */
         std::string legacy = legacy_gui_session_path();
         if (path_exists(legacy))
             path = legacy;
         else
             return;
     }
-    wxFileConfig cfg("sdmsg", wxEmptyString, path, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
+    wxFileConfig cfg("reflash", wxEmptyString, path, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
     if (!keep_target) {
         wxString target;
         if (cfg.Read("target", &target)) {
@@ -140,7 +140,7 @@ void restore_gui_session(Options &opts, bool keep_target, bool keep_db) {
 void save_gui_session(const Options &opts) {
     std::string path = gui_session_path();
     mkdir_p_parent(path);
-    wxFileConfig cfg("sdmsg", wxEmptyString, path, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
+    wxFileConfig cfg("reflash", wxEmptyString, path, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
     cfg.Write("target", wxString::FromUTF8(opts.target));
     cfg.Write("database", wxString::FromUTF8(opts.sqlite_db));
     cfg.Write("mode", opts.mode == RunMode::Recursive ? "recursive" : "linear");
@@ -168,7 +168,7 @@ std::vector<std::string> load_recent_targets(size_t max_n) {
         else
             return out;
     }
-    wxFileConfig cfg("sdmsg", wxEmptyString, path, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
+    wxFileConfig cfg("reflash", wxEmptyString, path, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
     long n = 0;
     cfg.Read("recent/count", &n, 0);
     for (long i = 0; i < n && out.size() < max_n; ++i) {
@@ -192,7 +192,7 @@ void remember_recent_target(const std::string &path, size_t max_n) {
         list.resize(max_n);
     std::string conf = gui_session_path();
     mkdir_p_parent(conf);
-    wxFileConfig cfg("sdmsg", wxEmptyString, conf, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
+    wxFileConfig cfg("reflash", wxEmptyString, conf, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
     cfg.Write("recent/count", static_cast<long>(list.size()));
     for (size_t i = 0; i < list.size(); ++i)
         cfg.Write(wxString::Format("recent/path%zu", i), wxString::FromUTF8(list[i]));
@@ -212,7 +212,7 @@ void load_conflict_pref(int *action, bool *remember) {
         else
             return;
     }
-    wxFileConfig cfg("sdmsg", wxEmptyString, path, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
+    wxFileConfig cfg("reflash", wxEmptyString, path, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
     long rem = 0;
     cfg.Read("conflict/remember", &rem, 0);
     if (remember)
@@ -226,7 +226,7 @@ void load_conflict_pref(int *action, bool *remember) {
 void save_conflict_pref(int action, bool remember) {
     std::string path = gui_session_path();
     mkdir_p_parent(path);
-    wxFileConfig cfg("sdmsg", wxEmptyString, path, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
+    wxFileConfig cfg("reflash", wxEmptyString, path, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
     cfg.Write("conflict/remember", remember ? 1L : 0L);
     cfg.Write("conflict/action", static_cast<long>(action));
     cfg.Flush();
@@ -239,7 +239,7 @@ BrowserSettings load_browser_settings() {
     std::string path = browser_settings_path();
     if (!path_exists(path))
         return s;
-    wxFileConfig cfg("sdmsg", wxEmptyString, path, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
+    wxFileConfig cfg("reflash", wxEmptyString, path, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
     long v = s.view_mode;
     if (cfg.Read("view/mode", &v) && v >= 0 && v <= 2)
         s.view_mode = static_cast<int>(v);
@@ -267,7 +267,7 @@ BrowserSettings load_browser_settings() {
 void save_browser_settings(const BrowserSettings &s) {
     std::string path = browser_settings_path();
     mkdir_p_parent(path);
-    wxFileConfig cfg("sdmsg", wxEmptyString, path, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
+    wxFileConfig cfg("reflash", wxEmptyString, path, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
     cfg.Write("view/mode", static_cast<long>(s.view_mode));
     cfg.Write("view/arrange", static_cast<long>(s.arrange));
     cfg.Write("view/arrange_rev", s.arrange_rev ? 1L : 0L);
@@ -278,4 +278,4 @@ void save_browser_settings(const BrowserSettings &s) {
     cfg.Flush();
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

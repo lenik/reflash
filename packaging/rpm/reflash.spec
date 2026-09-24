@@ -4,14 +4,14 @@
 %{!?version:%global version 0.0.0}
 %{!?srcversion:%global srcversion %{version}}
 
-Name:           sdmsg
+Name:           reflash
 Version:        %{version}
 Release:        1%{?dist}
 Summary:        Refresh flash storage by rewriting device data in place
 
 License:        AGPL-3.0-or-later
-URL:            https://github.com/lenik/sdmsg
-Packager:       Lenik <sdmsg@bodz.net>
+URL:            https://github.com/lenik/reflash
+Packager:       Lenik <reflash@bodz.net>
 Source0:        %{name}-%{srcversion}.tar.xz
 
 BuildRequires:  meson
@@ -23,7 +23,7 @@ BuildRequires:  openssl-devel
 BuildRequires:  wxGTK3-devel
 
 %description
-sdmsg ("SD massage") rewrites block devices or regular files in place to
+reflash ("SD massage") rewrites block devices or regular files in place to
 fight bit-rot on flash media that sits unused. Supports linear raw rewrite
 and recursive FAT/exFAT/NTFS/ext walks with SQLite tracking and an optional
 wxWidgets progress UI.
@@ -46,12 +46,14 @@ meson compile -C build
 meson install -C build --destdir=%{buildroot}
 
 %files
-%{_bindir}/sdmsg
-%{_datadir}/bash-completion/completions/sdmsg
-%{_mandir}/man1/sdmsg.1*
+%{_bindir}/reflash
+%{_datadir}/bash-completion/completions/reflash
+%{_mandir}/man1/reflash.1*
+%{_mandir}/*/man1/reflash.1*
+%{_datadir}/locale/*/LC_MESSAGES/reflash.mo
 %{_datadir}/doc/%{name}/
 
 %changelog
-* Thu Aug 20 2026 Lenik <sdmsg@bodz.net>
+* Thu Aug 20 2026 Lenik <reflash@bodz.net>
 - Align spec with debian/control (Meson, AGPL-3.0-or-later).
 - Version comes from `zfr version`, the same method meson.build uses.

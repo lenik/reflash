@@ -4,12 +4,12 @@
 #
 # Usage (from this directory):
 #   .\build.cmd
-#   .\build.ps1 -Name sdmsg -Version 1.2.3
+#   .\build.ps1 -Name reflash -Version 1.2.3
 #
 # Stages from ..\mingw\stage when present; otherwise meson install on Windows.
 
 param(
-    [string]$Name = "sdmsg",
+    [string]$Name = "reflash",
     [string]$Version = "",
     [string]$SrcDir = ""
 )

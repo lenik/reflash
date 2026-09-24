@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -10,7 +10,7 @@
 #include <map>
 #include <sstream>
 
-namespace sdmsg {
+namespace reflash {
 
 namespace {
 
@@ -103,4 +103,4 @@ std::string device_group_label(const BlockDevInfo &d) {
     return "Other";
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

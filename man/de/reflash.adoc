@@ -1,0 +1,81 @@
+= reflash(1)
+Lenik <reflash@bodz.net>
+v{project-version}, {project-year}
+:doctype: manpage
+:manmanual: Benutzerbefehle
+:mansource: reflash
+:man-linkstyle: blue R <>
+:nofooter:
+
+== Name
+
+reflash - Gerät- oder Dateidaten an Ort und Stelle neu schreiben (SD-Massage)
+
+== Synopsis
+
+*reflash* [_OPTION_]... [_DEVICE/FILE_]
+
+== Description
+
+*reflash* schreibt ein Blockgerät oder eine reguläre Datei *an Ort und Stelle* neu, damit ungenutzte Flash-Medien keine Ladung verlieren und Daten korrumpieren. Jede E/A-Einheit wird gelesen und unverändert zurückgeschrieben. Fortschritt, Geschwindigkeit und ETA gehen nach stderr. Mit *--gui* steht eine wxWidgets-Oberfläche bereit, wenn ein Display vorhanden ist; mit *--gui* darf _DEVICE/FILE_ entfallen und über das Dateimenü geöffnet werden.
+
+Zwei Modi werden unterstützt:
+
+* *linear* (Standard) -- Ziel als rohen Bytebereich behandeln. Bei Partitionstabelle werden Tabelle und jede Partition getrennt umgeschrieben.
+* *recursive* -- ungemountetes Dateisystem (FAT/exFAT, NTFS, ext2/3/4) über On-Disk-Strukturen durchlaufen (nicht gemountetes VFS) und Dateidaten sowie wesentliche Metadaten umschreiben.
+
+Eine SQLite-Datenbank speichert Pfade, SHA-1-Prüfsummen, Massage-/Verify-Zähler und schlechte Extents. Partitionstabellen und Dateisystem-Metadaten nutzen Spezialpfade wie `::mbr`, `::gpt`, `::part-N`, `::boot` und `::superblock`.
+
+Umschreiben läuft immer gegen ein *abgehängtes* Gerät und berührt nur allozierte Dateisystemdaten (freier Speicher wird übersprungen). Komprimierte oder verschlüsselte NTFS-Daten werden wie auf der Platte gespeichert umgeschrieben (keine Entschlüsselung). SHA-1 wird *nach* dem Umschreiben bei gemountetem Dateisystem berechnet (nur Lesen reicht). Bestehende Mounts werden fürs Umschreiben abgehängt und danach wiederhergestellt (inkl. Lese-/Schreibmodus). SHA-1 läuft bei genutzter Datenbank: immer im Headless-Modus, in der GUI erst nach Database → Open. Die GUI fragt nie auf dem Terminal. Reguläre Datei oder Loopgerät wird mit FUSE nur lesend gemountet. Echte Disks nutzen udisks, dann `sudo`/`pkexec`. (*fakeroot* kann kein `CAP_SYS_ADMIN` geben und hilft nicht.) Edit → Dry-run liest den Scan und schreibt nicht.
+
+Reguläre Dateien werden ohne Trunkierung zum Lesen/Schreiben geöffnet.
+
+== Optionen
+
+*-b, --block-size* _NUM_::
+  E/A-Blockgröße in Bytes. Standard: Auto (`BLKSSZGET`, Datei-`st_blksize`, oder 4096).
+
+*-d, --sqlite-db* _FILE_::
+  SQLite-Verwaltungsdatenbank. Standard: `~/.cache/reflash/<name>.sqlite`.
+
+*-t, --test*::
+  Gegen die Datenbank prüfen (Lesen + SHA-1); nicht umschreiben. Immer headless.
+
+*-l, --linear*::
+  Rohes Umschreiben von Gerät/Datei (Standard).
+
+*-r, --recursive*::
+  Dateisystem-Durchlauf und Umschreiben. Zugehörige Mounts werden zuerst abgehängt und danach wiederhergestellt.
+
+*-g, --gui*::
+  wxWidgets-Fenster öffnen (braucht `DISPLAY` oder Wayland). _DEVICE/FILE_ optional; File → Open / Device, dann Start.
+
+*-v, --verbose*::
+  Mehr Protokollierung.
+
+*-q, --quiet*::
+  Weniger Protokollierung.
+
+*-h, --help*::
+  Hilfe anzeigen und beenden.
+
+*--version*::
+  Version anzeigen und beenden.
+
+== Exit-Status
+
+*0*:: Erfolg (E/A-Fehler einzelner Extents können trotzdem in der DB stehen).
+*1*:: Fehler.
+*2*:: Aufruffehler.
+
+== Hinweise
+
+Blockgeräte brauchen typischerweise root. Zugehörige Mounts werden fürs Umschreiben abgehängt und danach wiederhergestellt. SHA-1 wird nach dem Umschreiben auf gemounteten Dateiinhalten berechnet. Freier/unalloziierter Speicher wird nicht umgeschrieben. Nach einem Lauf können schlechte Extents als badblocks-artige Liste exportiert werden (GUI bietet Speichern-Dialog). Eine SQLite-Datei kann mehrere Geräte halten (`device`, `volume`, `object`, `folder`, `file`). Ein gespeicherter SHA-1 bleibt 183 Tage gültig, sofern Preferences das nicht ändern.
+
+== Siehe auch
+
+*badblocks*(8), *e2fsck*(8)
+
+== Autor
+
+{project-author} <{project-email}>

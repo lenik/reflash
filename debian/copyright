@@ -1,10 +1,10 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: sdmsg
-Upstream-Contact: Lenik <sdmsg@bodz.net>
-Source: https://github.com/lenik/sdmsg
+Upstream-Name: reflash
+Upstream-Contact: Lenik <reflash@bodz.net>
+Source: https://github.com/lenik/reflash
 
 Files: *
-Copyright: 2026 Lenik <sdmsg@bodz.net>
+Copyright: 2026 Lenik <reflash@bodz.net>
 License: AGPL-3+
 
 License: AGPL-3+

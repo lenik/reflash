@@ -1,3 +1,15 @@
+reflash (1.1.0) unstable; urgency=medium
+
+  * Rename package and binary from sdmsg to reflash.
+  * Finish rename leftovers: man/reflash.adoc, reflash.bash,
+    packaging/rpm/reflash.spec; drop debian/sdmsg build tree from VCS.
+  * Add L1 gettext catalogs and whole-document man translations
+    (fr, it, de, es, zh_CN, ja, ko, ar).
+  * Config dir ~/.config/reflash (was sdtouch); env REFLASH_CONFIG / REFLASH_SESSION.
+  * GUI e2e: look for Manifest → Use external SQLite (was Database menu).
+
+ -- Lenik (谢继雷) <lenik@bodz.net>  Thu, 24 Sep 2026 14:46:57 +0800
+
 sdmsg (1.0.0) unstable; urgency=medium
 
   * GUI: launch without target; menubar/toolbar/statusbar; device

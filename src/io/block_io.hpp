@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -16,7 +16,7 @@
 #include <string>
 #include <vector>
 
-namespace sdmsg {
+namespace reflash {
 
 enum class ExtentStatus { Ok = 0, ReadErr = 1, WriteErr = 2 };
 
@@ -50,4 +50,4 @@ BlockIoResult rewrite_range(Device &dev, std::uint64_t offset, std::uint64_t len
                             std::uint64_t block_size, RewriteFlags flags, PauseControl &pause,
                             Progress &progress, const std::string &object_path);
 
-} /* namespace sdmsg */
+} /* namespace reflash */

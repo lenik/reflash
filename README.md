@@ -1,6 +1,6 @@
-# sdmsg
+# reflash
 
-`sdmsg` (“SD massage”) rewrites block devices or regular files **in place** to
+`reflash` (“SD massage”) rewrites block devices or regular files **in place** to
 refresh flash storage that sits unused and slowly loses charge.  It is a
 Meson-built **C++** tool with an optional **wxWidgets** UI and a SQLite
 management database.
@@ -8,7 +8,7 @@ management database.
 ## Usage
 
 ```bash
-sdmsg [OPTIONS] DEVICE/FILE
+reflash [OPTIONS] DEVICE/FILE
 ```
 
 | Option | Meaning |
@@ -50,7 +50,7 @@ meson test -C /build
 
 ## License
 
-Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+Copyright (C) 2026 Lenik <reflash@bodz.net>
 
 Licensed under **AGPL-3.0-or-later**.  
 See `LICENSE` for the full text and supplemental project terms.

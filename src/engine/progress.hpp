@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-namespace sdmsg {
+namespace reflash {
 
 enum class CellStatus : std::uint8_t {
     Pending = 0,
@@ -104,4 +104,4 @@ private:
     static double now_sec();
 };
 
-} /* namespace sdmsg */
+} /* namespace reflash */

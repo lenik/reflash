@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -15,7 +15,7 @@
 #include <string>
 #include <thread>
 
-namespace sdmsg {
+namespace reflash {
 
 class MassageEngine {
 public:
@@ -50,4 +50,4 @@ private:
     std::uint64_t resolve_block_size(class Device &dev) const;
 };
 
-} /* namespace sdmsg */
+} /* namespace reflash */

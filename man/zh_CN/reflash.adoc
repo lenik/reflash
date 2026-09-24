@@ -1,0 +1,81 @@
+= reflash(1)
+Lenik <reflash@bodz.net>
+v{project-version}, {project-year}
+:doctype: manpage
+:manmanual: 用户命令
+:mansource: reflash
+:man-linkstyle: blue R <>
+:nofooter:
+
+== Name
+
+reflash - 原地重写设备或文件数据（SD 马杀鸡）
+
+== Synopsis
+
+*reflash* [_选项_]... [_DEVICE/FILE_]
+
+== Description
+
+*reflash* 对块设备或普通文件做*原地*重写，使长期闲置的闪存不因失电而损坏数据。每个 I/O 单元读出后再原样写回。进度、速度与预计剩余时间输出到标准错误。有显示器时可加 *--gui* 打开 wxWidgets 界面；使用 *--gui* 时可以省略 _DEVICE/FILE_，从“文件”菜单打开。
+
+支持两种模式：
+
+* *linear*（默认）——把目标当作原始字节范围。若有分区表，则分别重写分区表与各分区。
+* *recursive* ——按盘上结构遍历未挂载的文件系统（FAT/exFAT、NTFS、ext2/3/4），重写文件数据与必要元数据（不用已挂载的 VFS）。
+
+SQLite 数据库记录路径、SHA-1、重写/校验次数与坏区。分区表与文件系统元数据使用特殊路径，如 `::mbr`、`::gpt`、`::part-N`、`::boot`、`::superblock`。
+
+重写始终针对*未挂载*设备，且只触及已分配的文件系统数据（跳过空闲区）。压缩或加密的 NTFS 数据按盘上存储原样重写（不解密）。SHA-1 在重写*之后*、文件系统已挂载时计算（只读即可）。已有挂载会先卸下，结束后恢复（含读写）。启用数据库时才算 SHA-1：无界面模式总会算；图形界面仅在 Database → Open 之后。图形界面不会在终端提问。普通文件或 loop 用 FUSE 只读挂载。真实磁盘用 udisks，然后 `sudo`/`pkexec`。（*fakeroot* 无法授予 `CAP_SYS_ADMIN`，无帮助。）Edit → Dry-run 只读扫描，不写回。
+
+普通文件以读写方式打开，不会截短。
+
+== 选项
+
+*-b, --block-size* _NUM_::
+  I/O 块大小（字节）。默认：自动探测（`BLKSSZGET`、文件 `st_blksize`，或 4096）。
+
+*-d, --sqlite-db* _FILE_::
+  SQLite 管理数据库。默认：`~/.cache/reflash/<name>.sqlite`。
+
+*-t, --test*::
+  对照数据库校验（读 + SHA-1）；不重写。始终无界面。
+
+*-l, --linear*::
+  整盘/整文件裸重写（默认）。
+
+*-r, --recursive*::
+  文件系统遍历并重写。相关挂载先卸下，结束后恢复。
+
+*-g, --gui*::
+  打开 wxWidgets 窗口（需要 `DISPLAY` 或 Wayland）。_DEVICE/FILE_ 可选；用 File → Open / Device，然后 Start。
+
+*-v, --verbose*::
+  增加日志。
+
+*-q, --quiet*::
+  减少日志。
+
+*-h, --help*::
+  显示帮助并退出。
+
+*--version*::
+  显示版本并退出。
+
+== 退出状态
+
+*0*:: 成功（个别区段的 I/O 错误仍可能记入数据库）。
+*1*:: 失败。
+*2*:: 用法错误。
+
+== 说明
+
+块设备通常需要 root。相关挂载会先卸下再恢复。SHA-1 在重写后对已挂载文件内容计算。空闲/未分配空间不重写。运行结束后可将坏区导出为 badblocks 风格列表（图形界面提供保存对话框）。一个 SQLite 文件可容纳多台设备（`device`、`volume`、`object`、`folder`、`file`）。已存 SHA-1 默认 183 天有效，除非 Preferences 改掉。
+
+== 参见
+
+*badblocks*(8), *e2fsck*(8)
+
+== 作者
+
+{project-author} <{project-email}>

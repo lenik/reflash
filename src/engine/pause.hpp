@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -7,7 +7,7 @@
 
 #include <atomic>
 
-namespace sdmsg {
+namespace reflash {
 
 class PauseControl {
 public:
@@ -29,4 +29,4 @@ private:
     std::atomic<bool> stop_{false};
 };
 
-} /* namespace sdmsg */
+} /* namespace reflash */

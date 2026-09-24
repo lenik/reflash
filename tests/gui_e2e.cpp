@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
@@ -26,7 +26,7 @@ namespace {
 int g_code = 1;
 
 std::string make_fixture(std::string *session_out, std::string *err) {
-    char dir[] = "/tmp/sdmsg-e2e-XXXXXX";
+    char dir[] = "/tmp/reflash-e2e-XXXXXX";
     if (!mkdtemp(dir)) {
         *err = "mkdtemp failed";
         return {};
@@ -54,10 +54,10 @@ bool scenario() {
     std::string err, session, image = make_fixture(&session, &err);
     if (image.empty())
         return fail(err);
-    setenv("SDMSG_SESSION", session.c_str(), 1);
+    setenv("REFLASH_SESSION", session.c_str(), 1);
 
-    sdmsg::Options opts;
-    auto *frame = new sdmsg::MainFrame(opts);
+    reflash::Options opts;
+    auto *frame = new reflash::MainFrame(opts);
     frame->Show(true);
     frame->open_target(image);
 
@@ -67,7 +67,8 @@ bool scenario() {
     int stop_id = bar ? bar->FindMenuItem("&Edit", "S&top\tCtrl+.") : wxNOT_FOUND;
     int dry_id = bar ? bar->FindMenuItem("&Edit", "&Dry-run\tCtrl+3") : wxNOT_FOUND;
     int image_id = bar ? bar->FindMenuItem("&File", "&Image File...\tCtrl+O") : wxNOT_FOUND;
-    int manifest_id = bar ? bar->FindMenuItem("&Database", "&Use manifest db...\tCtrl+D") : wxNOT_FOUND;
+    int manifest_id =
+        bar ? bar->FindMenuItem("&Manifest", "&Use external SQLite...\tCtrl+D") : wxNOT_FOUND;
     if (start_id == wxNOT_FOUND || pause_id == wxNOT_FOUND || stop_id == wxNOT_FOUND)
         return fail("Edit menu is missing Start, Pause, or Stop");
     if (dry_id == wxNOT_FOUND)
@@ -75,7 +76,7 @@ bool scenario() {
     if (image_id == wxNOT_FOUND)
         return fail("File menu is missing Image File");
     if (manifest_id == wxNOT_FOUND)
-        return fail("Database menu is missing Use manifest db");
+        return fail("Manifest menu is missing Use external SQLite");
 
     auto *tools = frame->GetToolBar();
     if (!tools || !tools->FindById(start_id) || !tools->FindById(pause_id) || !tools->FindById(stop_id))
@@ -99,7 +100,7 @@ bool scenario() {
     if (!tools->GetToolEnabled(start_id))
         return fail("Start tool is disabled after opening the test file");
 
-    auto wait_done = [&](sdmsg::MainFrame *f, wxString *status_out) -> bool {
+    auto wait_done = [&](reflash::MainFrame *f, wxString *status_out) -> bool {
         for (int i = 0; i < 400; ++i) {
             wxYield();
             ::wxMilliSleep(25);
@@ -126,7 +127,7 @@ bool scenario() {
         return fail(std::string("expected Finished, got: ") + status.ToStdString());
     if (frame->grid_cells() == 0)
         return fail("scan grid is empty");
-    if (frame->grid_status_count(sdmsg::CellStatus::Ok) == 0)
+    if (frame->grid_status_count(reflash::CellStatus::Ok) == 0)
         return fail("scan grid has no completed cells");
     if (frame->log_count() == 0)
         return fail("log is empty");
@@ -137,7 +138,7 @@ bool scenario() {
         return fail(std::string("restart status: ") + status.ToStdString());
     if (frame->grid_resets() <= resets)
         return fail("restart did not reset the grid");
-    if (frame->grid_status_count(sdmsg::CellStatus::Ok) == 0)
+    if (frame->grid_status_count(reflash::CellStatus::Ok) == 0)
         return fail("restart grid has no completed cells");
 
     int close_id = bar->FindMenuItem("&File", "&Close\tCtrl+W");
@@ -156,8 +157,8 @@ bool scenario() {
     frame->Close(true);
     wxYield();
 
-    sdmsg::Options again;
-    auto *restored = new sdmsg::MainFrame(again);
+    reflash::Options again;
+    auto *restored = new reflash::MainFrame(again);
     restored->Show(true);
     wxYield();
     if (restored->options().target != opened)

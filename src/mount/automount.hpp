@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace sdmsg {
+namespace reflash {
 
 struct MountRecord {
     std::string device;
@@ -86,4 +86,4 @@ bool restore_mount_state(const std::string &device_path, const std::vector<Mount
                          const std::vector<MountRecord> &active, bool temp_created,
                          std::string *err);
 
-} /* namespace sdmsg */
+} /* namespace reflash */

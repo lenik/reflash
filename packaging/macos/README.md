@@ -11,6 +11,6 @@ writes `packaging/macos/out/<pkg>-<ver>.pkg` via `pkgbuild`.
 On non-macOS hosts, use **gh-makerelease** with:
 
 ```
-<project>/.config/sdmsg/macos.build-host
-$HOME/.config/sdmsg/macos.build-host
+<project>/.config/reflash/macos.build-host
+$HOME/.config/reflash/macos.build-host
 ```

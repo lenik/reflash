@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -44,7 +44,7 @@
 #include <wx/toolbar.h>
 #include <wx/utils.h>
 
-namespace sdmsg {
+namespace reflash {
 
 namespace {
 
@@ -528,7 +528,7 @@ void BrowserFrame::build_ui() {
                   "Sync: hash new files, drop dangling DB rows, and ask about conflicts.\n"
                   "Open uses the desktop default; Open as picks a program.\n"
                   "Ctrl+Mouse wheel zooms the file list.",
-                  "sdmsg files", wxOK | wxICON_INFORMATION, this);
+                  "reflash files", wxOK | wxICON_INFORMATION, this);
     }, wxID_ABOUT);
 
     /* Also accept Ctrl+= as zoom-in (unshifted + on many keyboards). */
@@ -1652,7 +1652,7 @@ void BrowserFrame::on_prefs(wxCommandEvent &) {
     root->Add(new wxStaticText(&dlg, wxID_ANY,
                                "Files verified within the auto-rewrite window are not "
                                "re-hashed until the window expires.\n"
-                               "Settings are saved under ~/.config/sdtouch/."),
+                               "Settings are saved under ~/.config/reflash/."),
               0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 12);
     root->Add(dlg.CreateButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL, 12);
     dlg.SetSizerAndFit(root);
@@ -1681,4 +1681,4 @@ void BrowserFrame::on_prefs(wxCommandEvent &) {
     save_settings();
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

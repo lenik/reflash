@@ -1,11 +1,11 @@
-# sdmsg
+# reflash
 
-`sdmsg`（“SD massage”）对块设备或普通文件做**原地重写**，给长期闲置、缓慢失电的闪存“马杀鸡”。基于 Meson 的 **C++** 程序，可选 **wxWidgets** 界面，并用 SQLite 记录管理数据。
+`reflash`（“SD massage”）对块设备或普通文件做**原地重写**，给长期闲置、缓慢失电的闪存“马杀鸡”。基于 Meson 的 **C++** 程序，可选 **wxWidgets** 界面，并用 SQLite 记录管理数据。
 
 ## 用法
 
 ```bash
-sdmsg [OPTIONS] DEVICE/FILE
+reflash [OPTIONS] DEVICE/FILE
 ```
 
 | 选项 | 含义 |
@@ -44,6 +44,6 @@ meson test -C /build
 
 ## 许可证
 
-Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+Copyright (C) 2026 Lenik <reflash@bodz.net>
 
 采用 **AGPL-3.0-or-later** 许可。完整文本见 `LICENSE`。

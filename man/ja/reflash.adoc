@@ -1,0 +1,81 @@
+= reflash(1)
+Lenik <reflash@bodz.net>
+v{project-version}, {project-year}
+:doctype: manpage
+:manmanual: ユーザーコマンド
+:mansource: reflash
+:man-linkstyle: blue R <>
+:nofooter:
+
+== Name
+
+reflash - デバイスまたはファイルのデータをその場で書き直す（SD マッサージ）
+
+== Synopsis
+
+*reflash* [_オプション_]... [_DEVICE/FILE_]
+
+== Description
+
+*reflash* はブロックデバイスまたは通常ファイルを*その場で*書き直し、使われずに放置されたフラッシュが失電してデータを損なわないようにします。各 I/O 単位を読み、そのまま書き戻します。進捗・速度・ETA は標準エラーへ出します。ディスプレイがある場合 *--gui* で wxWidgets UI を使えます。*--gui* では _DEVICE/FILE_ を省略し、File メニューから開けます。
+
+次の 2 モードをサポートします：
+
+* *linear*（既定）——対象を生のバイト範囲として扱う。パーティション表があれば、表と各パーティションを別々に書き直す。
+* *recursive* ——未マウントのファイルシステム（FAT/exFAT、NTFS、ext2/3/4）をディスク上構造で走査し（マウント済み VFS ではない）、ファイルデータと必須メタデータを書き直す。
+
+SQLite データベースはパス、SHA-1、massage/verify 回数、不良エクステントを記録します。パーティション表とファイルシステムメタデータは `::mbr`、`::gpt`、`::part-N`、`::boot`、`::superblock` などの特別なパスを使います。
+
+書き換えは常に*アンマウント*されたデバイスに対して行い、割り当て済みデータのみ触ります（空き領域はスキップ）。圧縮/暗号化 NTFS データはディスク上のまま書き直します（復号なし）。SHA-1 は書き換え*後*、マウント済み FS で計算します（読み取り専用で可）。既存マウントはいったん外し、後で復元します（読み書き含む）。データベース使用時のみ SHA-1：ヘッドレスでは常に、GUI では Database → Open の後のみ。GUI は端末で尋ねません。通常ファイルや loop は FUSE で読み取り専用マウント。実ディスクは udisks、続けて `sudo`/`pkexec`。（*fakeroot* は `CAP_SYS_ADMIN` を付与できず役に立ちません。）Edit → Dry-run は走査のみで書きません。
+
+通常ファイルは切り詰めずに読み書きで開きます。
+
+== オプション
+
+*-b, --block-size* _NUM_::
+  I/O ブロックサイズ（バイト）。既定: 自動（`BLKSSZGET`、ファイルの `st_blksize`、または 4096）。
+
+*-d, --sqlite-db* _FILE_::
+  SQLite 管理データベース。既定: `~/.cache/reflash/<name>.sqlite`。
+
+*-t, --test*::
+  データベースと照合して検証（読み取り + SHA-1）；書き換えなし。常にヘッドレス。
+
+*-l, --linear*::
+  デバイス/ファイル全体の生書き換え（既定）。
+
+*-r, --recursive*::
+  ファイルシステムを走査して書き換える。関連マウントは先に外し、後で復元する。
+
+*-g, --gui*::
+  wxWidgets ウィンドウを開く（`DISPLAY` または Wayland が必要）。_DEVICE/FILE_ は任意；File → Open / Device、その後 Start。
+
+*-v, --verbose*::
+  ログを増やす。
+
+*-q, --quiet*::
+  ログを減らす。
+
+*-h, --help*::
+  ヘルプを表示して終了。
+
+*--version*::
+  バージョンを表示して終了。
+
+== 終了ステータス
+
+*0*:: 成功（個別エクステントの I/O エラーは DB に記録されることがあります）。
+*1*:: 失敗。
+*2*:: 用法エラー。
+
+== 注記
+
+ブロックデバイスは通常 root が必要です。関連マウントは書き換え時に外し、後で復元します。SHA-1 は書き換え後、マウント済みファイル内容で計算します。空き/未割り当て領域は書き直しません。実行後、不良エクステントを badblocks 風リストとして書き出せます（GUI に保存ダイアログあり）。1 つの SQLite ファイルに複数デバイスを格納できます（`device`、`volume`、`object`、`folder`、`file`）。保存された SHA-1 は Preferences で変更しない限り 183 日間有効です。
+
+== 関連項目
+
+*badblocks*(8), *e2fsck*(8)
+
+== 著者
+
+{project-author} <{project-email}>

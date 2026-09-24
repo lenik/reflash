@@ -9,7 +9,7 @@
 # project-only tarball for nested language templates). Extra flags:
 #   make dist DIST_FLAGS='-b /other/build'
 
-NAME    := sdmsg
+NAME    := reflash
 SRCDIR  := $(abspath ../..)
 # RPM %_topdir: $HOME/rpmbuild by default (override in ~/.rpmmacros).
 # Override per build: make TOPDIR=/other/rpmbuild

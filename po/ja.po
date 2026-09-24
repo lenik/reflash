@@ -1,0 +1,116 @@
+# Japanese translations for reflash package.
+# Copyright (C) 2026 THE reflash'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the reflash package.
+# Automatically generated, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: reflash 1.1.0\n"
+"Report-Msgid-Bugs-To: reflash@bodz.net\n"
+"POT-Creation-Date: 2026-09-24 14:53+0800\n"
+"PO-Revision-Date: 2026-09-24 14:53+0800\n"
+"Last-Translator: Lenik <reflash@bodz.net>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: src/options.cpp:25
+msgid "Usage: reflash [OPTIONS] [DEVICE/FILE]\n"
+msgstr "使用法: reflash [OPTIONS] [DEVICE/FILE]\n"
+
+#: src/options.cpp:26
+msgid "Rewrite device/file data in place to refresh flash storage (\"massage\").\n"
+msgstr "フラッシュ記憶をリフレッシュするため、デバイス/ファイルのデータをその場で書き直します（「マッサージ」）。\n"
+
+#: src/options.cpp:29
+msgid "I/O block size (default: auto-detect)\n"
+msgstr "I/O ブロックサイズ（既定: 自動検出）\n"
+
+#: src/options.cpp:31
+msgid "SQLite management database\n"
+msgstr "SQLite 管理データベース\n"
+
+#: src/options.cpp:33
+msgid "Verify against DB (no rewrite)\n"
+msgstr "DB と照合して検証（書き換えなし）\n"
+
+#: src/options.cpp:35
+msgid "Raw whole-device/file rewrite (default)\n"
+msgstr "デバイス/ファイル全体の生書き換え（既定）\n"
+
+#: src/options.cpp:37
+msgid "Filesystem walk/rewrite (unmounted automatically)\n"
+msgstr "ファイルシステム走査/書き換え（自動アンマウント）\n"
+
+#: src/options.cpp:39
+msgid "Open wxWidgets UI (requires a display)\n"
+msgstr "wxWidgets UI を開く（ディスプレイが必要）\n"
+
+#: src/options.cpp:41
+msgid "More logging\n"
+msgstr "ログを増やす\n"
+
+#: src/options.cpp:43
+msgid "Less logging\n"
+msgstr "ログを減らす\n"
+
+#: src/options.cpp:45
+msgid "Show this help\n"
+msgstr "このヘルプを表示\n"
+
+#: src/options.cpp:47
+msgid "Show version\n"
+msgstr "バージョンを表示\n"
+
+#: src/options.cpp:49
+msgid "Headless by default (DEVICE/FILE required). Progress goes to stderr.\n"
+msgstr "既定はヘッドレス（DEVICE/FILE 必須）。進捗は stderr へ。\n"
+
+#: src/options.cpp:50
+msgid "With -g/--gui, DEVICE/FILE is optional; open a target from the File menu.\n"
+msgstr "-g/--gui では DEVICE/FILE は任意；File メニューから対象を開きます。\n"
+
+#: src/options.cpp:51
+#, c-format
+msgid "Report bugs to: <%s>\n"
+msgstr "バグ報告先: <%s>\n"
+
+#: src/options.cpp:55
+#, c-format
+msgid "reflash %s\n"
+msgstr "reflash %s\n"
+
+#: src/options.cpp:56
+#, c-format
+msgid "Copyright (C) %d %s\n"
+msgstr "Copyright (C) %d %s\n"
+
+#: src/options.cpp:57
+msgid "License AGPL-3.0-or-later: <https://www.gnu.org/licenses/agpl-3.0.html>\n"
+msgstr "ライセンス AGPL-3.0-or-later: <https://www.gnu.org/licenses/agpl-3.0.html>\n"
+
+#: src/options.cpp:58
+msgid "This is free software: you are free to change and redistribute it.\n"
+msgstr "これはフリーソフトウェアです。変更および再配布は自由です。\n"
+
+#: src/options.cpp:59
+msgid "This project opposes AI exploitation and AI hegemony.\n"
+msgstr "本プロジェクトは AI による搾取とヘゲモニーに反対します。\n"
+
+#: src/options.cpp:87
+#, c-format
+msgid "reflash: invalid --block-size\n"
+msgstr "reflash: 無効な --block-size\n"
+
+#: src/options.cpp:130
+#, c-format
+msgid "reflash: missing DEVICE/FILE\n"
+msgstr "reflash: DEVICE/FILE がありません\n"
+
+#: src/options.cpp:135
+#, c-format
+msgid "reflash: too many arguments\n"
+msgstr "reflash: 引数が多すぎます\n"

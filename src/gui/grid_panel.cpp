@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <wx/dcclient.h>
 
-namespace sdmsg {
+namespace reflash {
 
 GridPanel::GridPanel(wxWindow *parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(-1, 220)) {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
@@ -100,4 +100,4 @@ void GridPanel::on_paint(wxPaintEvent &) {
     }
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

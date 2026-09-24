@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -26,7 +26,7 @@ extern "C" {
 
 define_logger();
 
-namespace sdmsg {
+namespace reflash {
 
 static bool display_available() {
     const char *d = getenv("DISPLAY");
@@ -57,15 +57,15 @@ static void headless_progress_loop(MassageEngine &eng) {
     fprintf(stderr, "\n");
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */
 
 int main(int argc, char **argv) {
     const char *exe = self_exe();
     (void)exe;
     init_i18n(LOCALEDIR);
 
-    sdmsg::Options opts;
-    if (!sdmsg::parse_options(argc, argv, opts))
+    reflash::Options opts;
+    if (!reflash::parse_options(argc, argv, opts))
         return 2;
 
     /*
@@ -74,9 +74,9 @@ int main(int argc, char **argv) {
      * back to an invisible sudo password prompt.
      */
     if (opts.gui)
-        sdmsg::set_host_priv_gui(true);
-    if (!sdmsg::start_host_priv_agent() && opts.verbosity > 0)
-        fprintf(stderr, "sdmsg: host privilege agent failed to start\n");
+        reflash::set_host_priv_gui(true);
+    if (!reflash::start_host_priv_agent() && opts.verbosity > 0)
+        fprintf(stderr, "reflash: host privilege agent failed to start\n");
 
     /*
      * Enter a user+mount namespace while still single-threaded so later FUSE
@@ -86,33 +86,33 @@ int main(int argc, char **argv) {
      */
     {
         std::string ns_err;
-        if (!sdmsg::ensure_user_mount_ns(&ns_err) && opts.verbosity > 0)
-            fprintf(stderr, "sdmsg: user mount namespace: %s\n", ns_err.c_str());
+        if (!reflash::ensure_user_mount_ns(&ns_err) && opts.verbosity > 0)
+            fprintf(stderr, "reflash: user mount namespace: %s\n", ns_err.c_str());
     }
 
-    auto engine = std::make_shared<sdmsg::MassageEngine>(opts);
+    auto engine = std::make_shared<reflash::MassageEngine>(opts);
 
-    bool want_gui = opts.gui && opts.action != sdmsg::Action::Test;
-    if (want_gui && !sdmsg::display_available()) {
-        fprintf(stderr, "sdmsg: --gui requested but no display available; running headless\n");
+    bool want_gui = opts.gui && opts.action != reflash::Action::Test;
+    if (want_gui && !reflash::display_available()) {
+        fprintf(stderr, "reflash: --gui requested but no display available; running headless\n");
         want_gui = false;
     }
 
     if (want_gui)
-        return sdmsg::run_gui(opts, argc, argv);
+        return reflash::run_gui(opts, argc, argv);
 
     if (opts.target.empty()) {
-        fprintf(stderr, "sdmsg: missing DEVICE/FILE\n");
-        sdmsg::print_usage(stderr);
+        fprintf(stderr, "reflash: missing DEVICE/FILE\n");
+        reflash::print_usage(stderr);
         return 2;
     }
 
     std::string err;
     if (!engine->start(&err)) {
-        fprintf(stderr, "sdmsg: %s\n", err.c_str());
+        fprintf(stderr, "reflash: %s\n", err.c_str());
         return 1;
     }
-    sdmsg::headless_progress_loop(*engine);
+    reflash::headless_progress_loop(*engine);
     engine->join();
     return engine->exit_code();
 }

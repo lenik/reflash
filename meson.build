@@ -1,5 +1,5 @@
 project(
-    'sdmsg',
+    'reflash',
     ['cpp', 'c'],
     version: run_command(
         'sh',
@@ -27,7 +27,7 @@ project(
 )
 
 project_author = 'Lenik'
-project_email = 'sdmsg@bodz.net'
+project_email = 'reflash@bodz.net'
 project_year = 2026
 
 asciidoctor = find_program('asciidoctor', required: true)
@@ -52,19 +52,19 @@ configure_file(
     configuration: config_h,
 )
 
-bas_c_dep = dependency('bas-c', required: false)
+bas_c_dep = dependency('bas-c', required: true)
 sqlite_dep = dependency('sqlite3', required: true)
 crypto_dep = dependency('libcrypto', required: true)
 wx_dep = dependency('wxwidgets', version: '>=3.2', required: true, modules: ['std'])
 
-bas_args = []
-if bas_c_dep.found()
-    bas_args += ['-DLOGGER_NAME=' + meson.project_name(), '-DTEXT_DOMAIN=' + meson.project_name()]
-endif
+bas_args = [
+    '-DLOGGER_NAME=' + meson.project_name(),
+    '-DTEXT_DOMAIN=' + meson.project_name(),
+]
 
 inc = include_directories('src', '.')
 
-sdmsg_sources = [
+reflash_sources = [
     'src/main.cpp',
     'src/options.cpp',
     'src/engine/progress.cpp',
@@ -94,23 +94,20 @@ sdmsg_sources = [
     'src/gui/session.cpp',
 ]
 
-sdmsg_deps = [sqlite_dep, crypto_dep, wx_dep]
-if bas_c_dep.found()
-    sdmsg_deps += [bas_c_dep]
-endif
+reflash_deps = [sqlite_dep, crypto_dep, wx_dep, bas_c_dep]
 
 executable(
-    'sdmsg',
-    sdmsg_sources,
+    'reflash',
+    reflash_sources,
     include_directories: inc,
-    dependencies: sdmsg_deps,
+    dependencies: reflash_deps,
     cpp_args: bas_args,
     install: true,
     install_dir: bindir,
 )
 
 bash_files = [
-    'sdmsg.bash',
+    'reflash.bash',
 ]
 
 foreach file : bash_files
@@ -132,9 +129,9 @@ install_data(
 )
 
 custom_target(
-    'sdmsg-man',
-    input: 'man/sdmsg.adoc',
-    output: 'sdmsg.1',
+    'reflash-man',
+    input: 'man/reflash.adoc',
+    output: 'reflash.1',
     command: [
         asciidoctor,
         '-b', 'manpage',
@@ -150,7 +147,58 @@ custom_target(
     install_dir: mandir / 'man1',
 )
 
+manpage_langs = ['ar', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'zh_CN']
+foreach lang : manpage_langs
+    custom_target(
+        'reflash-man-' + lang,
+        input: 'man' / lang / 'reflash.adoc',
+        output: 'reflash.1.' + lang,
+        command: [
+            asciidoctor,
+            '-b', 'manpage',
+            '-a', 'project-version=' + meson.project_version(),
+            '-a', 'project-year=@0@'.format(project_year),
+            '-a', 'project-author=' + project_author,
+            '-a', 'project-email=' + project_email,
+            '-o', '@OUTPUT@',
+            '@INPUT@',
+        ],
+        build_by_default: true,
+    )
+endforeach
+
+meson.add_install_script(
+    'sh',
+    '-euc',
+    '''
+        build="@0@"
+        mandir="@1@"
+        for lang in ar de es fr it ja ko zh_CN; do
+            dest="${DESTDIR}${mandir}/${lang}/man1"
+            mkdir -p "$dest"
+            install -m644 "$build/reflash.1.$lang" "$dest/reflash.1"
+        done
+    '''.format(meson.project_build_root(), mandir),
+)
+
+
+
+i18n = import('i18n')
+
+subdir('po')
+
 subdir('tests')
+
+
+run_target(
+    'posync',
+    command: [
+        find_program('bash'),
+        meson.project_source_root() / 'scripts' / 'posync.sh',
+        meson.project_source_root(),
+        meson.project_version(),
+    ],
+)
 
 run_target(
     'look',

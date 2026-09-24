@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -7,8 +7,8 @@
 
 #include "fs/detect.hpp"
 
-namespace sdmsg {
+namespace reflash {
 
 bool scan_ext(Device &dev, std::uint64_t base, FsType type, FsScanResult &out);
 
-} /* namespace sdmsg */
+} /* namespace reflash */

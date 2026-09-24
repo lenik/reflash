@@ -1,2 +1,1 @@
-# Optional gettext catalogs not shipped yet (English UI strings in source).
--u ZL0051
+# Project uses L1 gettext + man/<locale>/ translations.

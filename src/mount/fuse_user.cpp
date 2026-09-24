@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -20,7 +20,7 @@
 #include <unistd.h>
 #include <vector>
 
-namespace sdmsg {
+namespace reflash {
 
 namespace {
 
@@ -131,7 +131,7 @@ int run_cmd_capture(const std::string &cmd, std::string *out) {
 }
 
 bool write_temp_script(const std::string &body, std::string *path_out, std::string *err) {
-    char tmpl[] = "/tmp/sdmsg-fuse-XXXXXX";
+    char tmpl[] = "/tmp/reflash-fuse-XXXXXX";
     int fd = ::mkstemp(tmpl);
     if (fd < 0) {
         if (err)
@@ -305,4 +305,4 @@ bool disable_fuse_user_mounts(std::string *err) {
     return apply_fuse_user_mounts(d, err);
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

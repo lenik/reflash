@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -11,7 +11,7 @@
 #include <wx/listctrl.h>
 #include <wx/panel.h>
 
-namespace sdmsg {
+namespace reflash {
 
 class LogPanel : public wxPanel {
 public:
@@ -38,4 +38,4 @@ private:
     void refill();
 };
 
-} /* namespace sdmsg */
+} /* namespace reflash */

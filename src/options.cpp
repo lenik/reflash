@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -12,37 +12,51 @@
 #include <cstring>
 #include <getopt.h>
 
-namespace sdmsg {
+extern "C" {
+#include <bas/locale/i18n.h>
+}
+
+namespace reflash {
 
 enum { OPT_VERSION = 256 };
 
 void print_usage(FILE *out) {
-    fputs("Usage: sdmsg [OPTIONS] [DEVICE/FILE]\n"
-          "Rewrite device/file data in place to refresh flash storage (\"massage\").\n"
-          "\n"
-          "  -b, --block-size NUM   I/O block size (default: auto-detect)\n"
-          "  -d, --sqlite-db FILE   SQLite management database\n"
-          "  -t, --test             Verify against DB (no rewrite)\n"
-          "  -l, --linear           Raw whole-device/file rewrite (default)\n"
-          "  -r, --recursive        Filesystem walk/rewrite (unmounted automatically)\n"
-          "  -g, --gui              Open wxWidgets UI (requires a display)\n"
-          "  -v, --verbose          More logging\n"
-          "  -q, --quiet            Less logging\n"
-          "  -h, --help             Show this help\n"
-          "      --version          Show version\n"
-          "\n"
-          "Headless by default (DEVICE/FILE required). Progress goes to stderr.\n"
-          "With -g/--gui, DEVICE/FILE is optional; open a target from the File menu.\n",
-          out);
-    fprintf(out, "Report bugs to: <%s>\n", PROJECT_EMAIL);
+    /* Help text is gettext'd line-by-line. Option tokens stay outside _(). */
+    fputs(_("Usage: reflash [OPTIONS] [DEVICE/FILE]\n"), out);
+    fputs(_("Rewrite device/file data in place to refresh flash storage (\"massage\").\n"), out);
+    fputs("\n", out);
+    fputs("  -b, --block-size NUM   ", out);
+    fputs(_("I/O block size (default: auto-detect)\n"), out);
+    fputs("  -d, --sqlite-db FILE   ", out);
+    fputs(_("SQLite management database\n"), out);
+    fputs("  -t, --test             ", out);
+    fputs(_("Verify against DB (no rewrite)\n"), out);
+    fputs("  -l, --linear           ", out);
+    fputs(_("Raw whole-device/file rewrite (default)\n"), out);
+    fputs("  -r, --recursive        ", out);
+    fputs(_("Filesystem walk/rewrite (unmounted automatically)\n"), out);
+    fputs("  -g, --gui              ", out);
+    fputs(_("Open wxWidgets UI (requires a display)\n"), out);
+    fputs("  -v, --verbose          ", out);
+    fputs(_("More logging\n"), out);
+    fputs("  -q, --quiet            ", out);
+    fputs(_("Less logging\n"), out);
+    fputs("  -h, --help             ", out);
+    fputs(_("Show this help\n"), out);
+    fputs("      --version          ", out);
+    fputs(_("Show version\n"), out);
+    fputs("\n", out);
+    fputs(_("Headless by default (DEVICE/FILE required). Progress goes to stderr.\n"), out);
+    fputs(_("With -g/--gui, DEVICE/FILE is optional; open a target from the File menu.\n"), out);
+    fprintf(out, _("Report bugs to: <%s>\n"), PROJECT_EMAIL);
 }
 
 void print_version() {
-    printf("sdmsg %s\n", PROJECT_VERSION);
-    printf("Copyright (C) %d %s\n", PROJECT_YEAR, PROJECT_AUTHOR);
-    fputs("License AGPL-3.0-or-later: <https://www.gnu.org/licenses/agpl-3.0.html>\n", stdout);
-    fputs("This is free software: you are free to change and redistribute it.\n", stdout);
-    fputs("This project opposes AI exploitation and AI hegemony.\n", stdout);
+    printf(_("reflash %s\n"), PROJECT_VERSION);
+    printf(_("Copyright (C) %d %s\n"), PROJECT_YEAR, PROJECT_AUTHOR);
+    fputs(_("License AGPL-3.0-or-later: <https://www.gnu.org/licenses/agpl-3.0.html>\n"), stdout);
+    fputs(_("This is free software: you are free to change and redistribute it.\n"), stdout);
+    fputs(_("This project opposes AI exploitation and AI hegemony.\n"), stdout);
 }
 
 bool parse_options(int argc, char **argv, Options &out) {
@@ -70,7 +84,7 @@ bool parse_options(int argc, char **argv, Options &out) {
             char *end = nullptr;
             unsigned long long v = strtoull(optarg, &end, 0);
             if (!optarg[0] || (end && *end) || v == 0) {
-                fprintf(stderr, "sdmsg: invalid --block-size\n");
+                fprintf(stderr, _("reflash: invalid --block-size\n"));
                 return false;
             }
             out.block_size = v;
@@ -113,16 +127,16 @@ bool parse_options(int argc, char **argv, Options &out) {
     if (optind >= argc) {
         if (out.gui)
             return true; /* idle GUI: open target from menus */
-        fprintf(stderr, "sdmsg: missing DEVICE/FILE\n");
+        fprintf(stderr, _("reflash: missing DEVICE/FILE\n"));
         print_usage(stderr);
         return false;
     }
     if (optind + 1 != argc) {
-        fprintf(stderr, "sdmsg: too many arguments\n");
+        fprintf(stderr, _("reflash: too many arguments\n"));
         return false;
     }
     out.target = argv[optind];
     return true;
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

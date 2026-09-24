@@ -1,11 +1,11 @@
 # Example remote build hosts for packaging/win32 (copy, do not commit secrets).
 #
 # Lookup:
-#   <project>/.config/sdmsg/mingw.build-host
-#   <project>/.config/sdmsg/innosetup.build-host
-#   <project>/.config/sdmsg/wix.build-host
-#   <project>/.config/sdmsg/win32.build-host
-#   $HOME/.config/sdmsg/<same>
+#   <project>/.config/reflash/mingw.build-host
+#   <project>/.config/reflash/innosetup.build-host
+#   <project>/.config/reflash/wix.build-host
+#   <project>/.config/reflash/win32.build-host
+#   $HOME/.config/reflash/<same>
 #
 # Multiple stanzas (blank-line separated) are ssh ProxyJump hops.
 # Only the last host's build_dir / shell is used for the build.
@@ -22,5 +22,5 @@
 # shell: powershell
 # # shell: cmd
 # identity: ~/.ssh/winbuild
-# build_dir: C:/build/sdmsg
+# build_dir: C:/build/reflash
 # preserved: true

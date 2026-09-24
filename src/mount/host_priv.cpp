@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -20,7 +20,7 @@
 #include <unistd.h>
 #include <vector>
 
-namespace sdmsg {
+namespace reflash {
 
 namespace {
 
@@ -84,11 +84,11 @@ void snap_session_env() {
 }
 
 std::string fixed_script_path() {
-    return "/tmp/sdmsg-priv-" + std::to_string(static_cast<long>(::getuid())) + "/run.sh";
+    return "/tmp/reflash-priv-" + std::to_string(static_cast<long>(::getuid())) + "/run.sh";
 }
 
 bool ensure_script_dir(std::string *err) {
-    std::string dir = "/tmp/sdmsg-priv-" + std::to_string(static_cast<long>(::getuid()));
+    std::string dir = "/tmp/reflash-priv-" + std::to_string(static_cast<long>(::getuid()));
     if (::mkdir(dir.c_str(), 0700) != 0 && errno != EEXIST) {
         if (err)
             *err = std::string("mkdir: ") + std::strerror(errno);
@@ -127,7 +127,7 @@ bool write_fixed_script(const std::string &body, std::string *path_out, std::str
 int run_argv_capture(const std::vector<std::string> &argv, std::string *out) {
     if (argv.empty())
         return -1;
-    char out_tmpl[] = "/tmp/sdmsg-priv-out-XXXXXX";
+    char out_tmpl[] = "/tmp/reflash-priv-out-XXXXXX";
     int out_fd = ::mkstemp(out_tmpl);
     if (out_fd < 0)
         return -1;
@@ -371,4 +371,4 @@ bool run_host_privileged_script(const std::string &script, std::string *err) {
     return true;
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

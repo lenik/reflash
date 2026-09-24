@@ -1,6 +1,6 @@
-# bash completion for sdmsg
+# bash completion for reflash
 
-_sdmsg()
+_reflash()
 {
 	local cur prev words cword
 	_init_completion || return
@@ -23,4 +23,4 @@ _sdmsg()
 	_filedir
 }
 
-complete -F _sdmsg sdmsg
+complete -F _reflash reflash

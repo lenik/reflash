@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -51,7 +51,7 @@
 #include <wx/utils.h>
 
 
-namespace sdmsg {
+namespace reflash {
 
 namespace {
 
@@ -195,7 +195,7 @@ static void mirror_log_stdout(const LogEntry &e) {
 }
 
 MainFrame::MainFrame(Options opts)
-    : wxFrame(nullptr, wxID_ANY, "sdmsg", wxDefaultPosition, wxSize(960, 640)),
+    : wxFrame(nullptr, wxID_ANY, "reflash", wxDefaultPosition, wxSize(960, 640)),
       opts_(std::move(opts)), timer_(this) {
     const bool cli_target = !opts_.target.empty();
     db_cli_explicit_ = opts_.sqlite_db_explicit;
@@ -558,7 +558,7 @@ void MainFrame::popup_drive_menu() {
 }
 
 void MainFrame::update_title() {
-    wxString t = "sdmsg";
+    wxString t = "reflash";
     if (!opts_.target.empty())
         t += " - " + opts_.target;
     if (!opts_.sqlite_db.empty())
@@ -678,7 +678,7 @@ void MainFrame::open_database(const std::string &path) {
     }
     std::string err;
     if (!catalog_.open(path, &err)) {
-        alert_box(err, "sdmsg", wxOK | wxICON_ERROR, this);
+        alert_box(err, "reflash", wxOK | wxICON_ERROR, this);
         update_db_ui();
         return;
     }
@@ -799,7 +799,7 @@ bool MainFrame::ensure_engine() {
 
 void MainFrame::start_run() {
     if (opts_.target.empty()) {
-        alert_box("Open a file or choose a device first.", "sdmsg", wxOK | wxICON_INFORMATION,
+        alert_box("Open a file or choose a device first.", "reflash", wxOK | wxICON_INFORMATION,
                      this);
         return;
     }
@@ -821,7 +821,7 @@ void MainFrame::start_run() {
     ++grid_resets_;
     std::string err;
     if (!engine_->start(&err)) {
-        alert_box(err, "sdmsg", wxOK | wxICON_ERROR, this);
+        alert_box(err, "reflash", wxOK | wxICON_ERROR, this);
         set_running_ui(false);
         return;
     }
@@ -937,7 +937,7 @@ void MainFrame::eject_or_remove(bool power_off) {
     close_target();
     if (!ok) {
         alert_box(err.empty() ? (power_off ? "Safely remove failed." : "Eject failed.") : err,
-                  "sdmsg", wxOK | wxICON_WARNING, this);
+                  "reflash", wxOK | wxICON_WARNING, this);
         set_status(power_off ? "Safely remove failed" : "Eject failed");
     } else {
         set_status(wxString::Format(power_off ? "Safely removed: %s" : "Ejected: %s", target));
@@ -1039,7 +1039,7 @@ void MainFrame::on_db_create_default(wxCommandEvent &) {
     if (engine_ && engine_->running())
         return;
     if (opts_.target.empty()) {
-        alert_box("Open a drive (disk, loop, or image) first.", "sdmsg", wxOK | wxICON_INFORMATION,
+        alert_box("Open a drive (disk, loop, or image) first.", "reflash", wxOK | wxICON_INFORMATION,
                   this);
         return;
     }
@@ -1083,7 +1083,7 @@ void MainFrame::on_db_close(wxCommandEvent &) { close_database(); }
 
 void MainFrame::on_db_integrity(wxCommandEvent &) {
     if (!db_open_) {
-        alert_box("Open a manifest database first.", "sdmsg", wxOK | wxICON_INFORMATION, this);
+        alert_box("Open a manifest database first.", "reflash", wxOK | wxICON_INFORMATION, this);
         return;
     }
 
@@ -1306,11 +1306,11 @@ void MainFrame::on_db_browser(wxCommandEvent &) {
     if (!user_mounts_ready()) {
         alert_box("Browsing support is not set up yet.\n"
                   "Open Manifest → User mounts support to finish setup.",
-                  "sdmsg", wxOK | wxICON_INFORMATION, this);
+                  "reflash", wxOK | wxICON_INFORMATION, this);
         return;
     }
     if (opts_.target.empty()) {
-        alert_box("Open a drive (disk, loop, or image) first.", "sdmsg", wxOK | wxICON_INFORMATION,
+        alert_box("Open a drive (disk, loop, or image) first.", "reflash", wxOK | wxICON_INFORMATION,
                      this);
         return;
     }
@@ -1319,7 +1319,7 @@ void MainFrame::on_db_browser(wxCommandEvent &) {
         if (!db_open_)
             open_database(default_db_path(opts_.target));
         if (!db_open_) {
-            alert_box("Could not open or create a manifest database.", "sdmsg",
+            alert_box("Could not open or create a manifest database.", "reflash",
                          wxOK | wxICON_ERROR, this);
             return;
         }
@@ -1335,7 +1335,7 @@ void MainFrame::on_db_browser(wxCommandEvent &) {
     bool temp = false;
     std::string err;
     if (!mount_for_browse(opts_.target, &mounts, &temp, &err) || mounts.empty()) {
-        alert_box(err.empty() ? "Could not open the drive for browsing." : err, "sdmsg",
+        alert_box(err.empty() ? "Could not open the drive for browsing." : err, "reflash",
                      wxOK | wxICON_ERROR, this);
         return;
     }
@@ -1429,7 +1429,7 @@ void MainFrame::on_edit_on_files(wxCommandEvent &) {
             "This operation is risky and has not been fully tested.\n"
             "It may damage the drive or cause data loss.\n\n"
             "Switch to Files mode anyway?",
-            "sdmsg", wxYES_NO | wxNO_DEFAULT | wxICON_WARNING, this);
+            "reflash", wxYES_NO | wxNO_DEFAULT | wxICON_WARNING, this);
         if (ans != wxYES) {
             if (auto *mb = GetMenuBar())
                 mb->Check(ID_EDIT_RAW_DISK, true);
@@ -1538,7 +1538,7 @@ void MainFrame::on_edit_prefs(wxCommandEvent &) {
             "This operation is risky and has not been fully tested.\n"
             "It may damage the drive or cause data loss.\n\n"
             "Switch to Files mode anyway?",
-            "sdmsg", wxYES_NO | wxNO_DEFAULT | wxICON_WARNING, this);
+            "reflash", wxYES_NO | wxNO_DEFAULT | wxICON_WARNING, this);
         if (ans != wxYES)
             new_mode = opts_.mode;
     }
@@ -1562,7 +1562,7 @@ void MainFrame::on_edit_prefs(wxCommandEvent &) {
     if (db_open_) {
         std::string err;
         if (!catalog_.set_sha1_valid_days(opts_.sha1_valid_days, &err))
-            alert_box(err, "sdmsg", wxOK | wxICON_ERROR, this);
+            alert_box(err, "reflash", wxOK | wxICON_ERROR, this);
     }
     set_status(wxString::Format("Preferences saved (SHA-1 %d days, poll %d ms)",
                                 opts_.sha1_valid_days, opts_.flush_poll_ms));
@@ -1607,7 +1607,7 @@ bool MainFrame::show_user_mounts_dialog() {
     }
     hdr_col->Add(title, 0, wxEXPAND);
     const wxString intro_plain =
-        "sdmsg can open filesystem images in the Manifest & Files window. "
+        "reflash can open filesystem images in the Manifest & Files window. "
         "That needs a small one-time system setup. Tick what you want, then Apply.";
     auto *intro = new wxStaticText(&dlg, wxID_ANY, intro_plain);
     add_wrap(intro, intro_plain);
@@ -1770,7 +1770,7 @@ bool MainFrame::show_user_mounts_dialog() {
 
 void MainFrame::on_db_admin(wxCommandEvent &) {
     if (!db_open_ || opts_.sqlite_db.empty()) {
-        alert_box("Open a manifest database first.", "sdmsg", wxOK | wxICON_INFORMATION, this);
+        alert_box("Open a manifest database first.", "reflash", wxOK | wxICON_INFORMATION, this);
         return;
     }
     const char *tools[] = {"sqlitebrowser", "sqlitestudio", nullptr};
@@ -1803,11 +1803,11 @@ void MainFrame::on_db_user_mounts(wxCommandEvent &) {
 
 void MainFrame::on_help_about(wxCommandEvent &) {
     wxAboutDialogInfo info;
-    info.SetName("sdmsg");
+    info.SetName("reflash");
     info.SetVersion(PROJECT_VERSION);
     info.SetDescription("Rewrite device/file data in place to refresh flash storage.");
     info.SetCopyright(wxString::Format("(C) %d %s", PROJECT_YEAR, PROJECT_AUTHOR));
-    info.SetWebSite("https://github.com/lenik/sdmsg");
+    info.SetWebSite("https://github.com/lenik/reflash");
     info.AddDeveloper(PROJECT_AUTHOR);
     wxAboutBox(info, this);
 }
@@ -1817,8 +1817,8 @@ void MainFrame::on_help_usage(wxCommandEvent &) {
         "Choose a Drive (Disks / Loop / Image File), Use a manifest database,\n"
         "then Start. Dry-run reads without writing.\n"
         "SHA-1 runs only when a manifest database is in use.\n\n"
-        "Headless: sdmsg [OPTIONS] DEVICE/FILE\n"
-        "GUI idle: sdmsg -g\n\n"
+        "Headless: reflash [OPTIONS] DEVICE/FILE\n"
+        "GUI idle: reflash -g\n\n"
         "The GUI does not ask questions on the terminal.",
         "Usage", wxOK | wxICON_INFORMATION, this);
 }
@@ -1943,7 +1943,7 @@ void MainFrame::maybe_offer_badblocks() {
         wxString::Format(
             "Recorded %zu bad extent(s).\nExport a badblocks-compatible list of block numbers?",
             bad.size()),
-        "sdmsg", wxYES_NO | wxICON_WARNING, this);
+        "reflash", wxYES_NO | wxICON_WARNING, this);
     if (ans != wxYES)
         return;
     wxFileDialog dlg(this, "Save bad block list", "", "badblocks.txt", "Text files (*.txt)|*.txt",
@@ -1963,7 +1963,7 @@ void MainFrame::maybe_offer_badblocks() {
     }
     alert_box("Wrote bad block list. For ext filesystems you may pass it to e2fsck -l.\n"
                  "Do not mark blocks without understanding the filesystem consequences.",
-                 "sdmsg", wxOK | wxICON_INFORMATION, this);
+                 "reflash", wxOK | wxICON_INFORMATION, this);
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -14,7 +14,7 @@
 
 struct sqlite3;
 
-namespace sdmsg {
+namespace reflash {
 
 enum class VerifyStatus : int { Unknown = 0, Ok = 1, Fail = 2 };
 
@@ -136,4 +136,4 @@ private:
 
 std::string default_db_path(const std::string &target);
 
-} /* namespace sdmsg */
+} /* namespace reflash */

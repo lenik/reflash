@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -7,7 +7,7 @@
 
 #include <string>
 
-namespace sdmsg {
+namespace reflash {
 
 /*
  * Fork a helper that stays in the host namespaces. Call once before entering
@@ -24,4 +24,4 @@ bool host_priv_gui();
 /* Run a shell script via the host agent (pkexec in GUI; pkexec then sudo headless). */
 bool run_host_privileged_script(const std::string &script, std::string *err = nullptr);
 
-} /* namespace sdmsg */
+} /* namespace reflash */

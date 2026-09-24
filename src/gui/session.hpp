@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -10,13 +10,13 @@
 #include <string>
 #include <vector>
 
-namespace sdmsg {
+namespace reflash {
 
-/* ~/.config/sdtouch (SDMSG_CONFIG overrides the directory). */
+/* ~/.config/reflash (REFLASH_CONFIG overrides the directory). */
 std::string config_dir();
 
 /* Last GUI target, database, mode, and SHA-1 window.
- * SDMSG_SESSION overrides the path (a file, not a directory). */
+ * REFLASH_SESSION overrides the path (a file, not a directory). */
 std::string gui_session_path();
 
 /* Fill empty CLI fields from the session file. Missing paths are ignored. */
@@ -48,4 +48,4 @@ struct BrowserSettings {
 BrowserSettings load_browser_settings();
 void save_browser_settings(const BrowserSettings &s);
 
-} /* namespace sdmsg */
+} /* namespace reflash */

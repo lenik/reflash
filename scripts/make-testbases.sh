@@ -74,7 +74,7 @@ docker_populate() {
     "$DOCKER_IMG" \
     bash -s <<'EOS'
 set -euo pipefail
-fill="$MNT/.sdmsg-fill"
+fill="$MNT/.reflash-fill"
 mkdir -p "$fill"
 
 free_k=$(df -Pk "$MNT" | awk 'NR==2{print $4}')
@@ -104,7 +104,7 @@ sync
 
 echo "  [$LABEL] copying source tree into fragmented free space..."
 if command -v rsync >/dev/null 2>&1; then
-  rsync -a --exclude='.sdmsg-fill' "$SRC"/ "$MNT"/
+  rsync -a --exclude='.reflash-fill' "$SRC"/ "$MNT"/
 else
   cp -a "$SRC"/. "$MNT"/
 fi
@@ -117,12 +117,12 @@ while IFS= read -r f; do
   count=$((count+1))
   rem=$((count % 7))
   if [ "$rem" -eq 0 ]; then
-    tmp="$f.sdmsg-tmp"
+    tmp="$f.reflash-tmp"
     cp -a "$f" "$tmp"
     mv -f "$tmp" "$f"
   fi
   if [ "$count" -gt 80 ]; then break; fi
-done < <(find "$MNT" -type f ! -path '*/.sdmsg-fill/*' 2>/dev/null)
+done < <(find "$MNT" -type f ! -path '*/.reflash-fill/*' 2>/dev/null)
 
 echo "  [$LABEL] removing remaining fillers..."
 rm -rf "$fill"

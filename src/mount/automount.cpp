@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -27,7 +27,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-namespace sdmsg {
+namespace reflash {
 
 namespace {
 
@@ -628,7 +628,7 @@ bool prepare_sha1_mounts(const std::string &device_path, const std::vector<Mount
     }
 
     if (original.empty()) {
-        std::string mnt = "/tmp/sdmsg-mnt-XXXXXX";
+        std::string mnt = "/tmp/reflash-mnt-XXXXXX";
         char tmpl[64];
         std::snprintf(tmpl, sizeof tmpl, "%s", mnt.c_str());
         if (!mkdtemp(tmpl)) {
@@ -703,7 +703,7 @@ bool restore_mount_state(const std::string &device_path, const std::vector<Mount
               });
     for (const auto &m : cur) {
         unmount_one(m, nullptr);
-        if (temp_created && m.target.find("/tmp/sdmsg-mnt-") == 0)
+        if (temp_created && m.target.find("/tmp/reflash-mnt-") == 0)
             rmdir(m.target.c_str());
     }
 
@@ -733,7 +733,7 @@ static std::string fs_fuse_hint(FsType t) {
 }
 
 static bool mkdtemp_mnt(char *tmpl, std::string *err) {
-    std::snprintf(tmpl, 64, "/tmp/sdmsg-mnt-XXXXXX");
+    std::snprintf(tmpl, 64, "/tmp/reflash-mnt-XXXXXX");
     if (!mkdtemp(tmpl)) {
         if (err)
             *err = "mkdtemp failed";
@@ -892,4 +892,4 @@ std::string find_builtin_manifest_db(const std::string &device_path) {
     return {};
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

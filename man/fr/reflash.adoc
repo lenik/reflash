@@ -1,0 +1,81 @@
+= reflash(1)
+Lenik <reflash@bodz.net>
+v{project-version}, {project-year}
+:doctype: manpage
+:manmanual: Commandes utilisateur
+:mansource: reflash
+:man-linkstyle: blue R <>
+:nofooter:
+
+== Name
+
+reflash - réécrire les données du périphérique ou fichier sur place (massage SD)
+
+== Synopsis
+
+*reflash* [_OPTION_]... [_DEVICE/FILE_]
+
+== Description
+
+*reflash* réécrit un périphérique bloc ou un fichier régulier *sur place* pour que le flash inutilisé ne perde pas sa charge et ne corrompe pas les données. Chaque unité d’E/S est lue puis réécrite à l’identique. Progression, vitesse et ETA vont sur stderr. Une UI wxWidgets est disponible avec *--gui* si un affichage est présent ; avec *--gui*, _DEVICE/FILE_ peut être omis et ouvert depuis le menu Fichier.
+
+Deux modes sont pris en charge :
+
+* *linear* (par défaut) -- traiter la cible comme une plage d’octets brute. Si une table de partitions est présente, la table et chaque partition sont réécrites séparément.
+* *recursive* -- parcourir un système de fichiers non monté (FAT/exFAT, NTFS, ext2/3/4) via les structures sur disque (pas un VFS monté) et réécrire les données de fichiers plus les métadonnées essentielles.
+
+Une base SQLite enregistre chemins, SHA-1, compteurs massage/verify et mauvaises extents. Tables de partitions et métadonnées FS utilisent des chemins spéciaux comme `::mbr`, `::gpt`, `::part-N`, `::boot` et `::superblock`.
+
+La réécriture vise toujours un périphérique *démonté* et ne touche que les données allouées (espace libre ignoré). Les données NTFS compressées ou chiffrées sont réécrites telles que stockées (pas de déchiffrement). Les SHA-1 sont calculés *après* la réécriture, FS monté (lecture seule suffit). Les montages existants sont démontés puis restaurés (y compris lecture/écriture). SHA-1 seulement si une base est utilisée : toujours en mode sans interface, en GUI seulement après Database → Open. La GUI ne demande jamais sur le terminal. Fichier régulier ou loop monté en lecture seule via FUSE. Disque réel : udisks, puis `sudo`/`pkexec`. (*fakeroot* ne donne pas `CAP_SYS_ADMIN`.) Edit → Dry-run lit le scan sans écrire.
+
+Les fichiers réguliers sont ouverts en lecture/écriture sans troncature.
+
+== Options
+
+*-b, --block-size* _NUM_::
+  Taille de bloc E/S en octets. Par défaut : auto (`BLKSSZGET`, `st_blksize` du fichier, ou 4096).
+
+*-d, --sqlite-db* _FILE_::
+  Base SQLite de gestion. Par défaut : `~/.cache/reflash/<name>.sqlite`.
+
+*-t, --test*::
+  Vérifier contre la base (lecture + SHA-1) ; ne pas réécrire. Toujours sans interface.
+
+*-l, --linear*::
+  Réécriture brute périphérique/fichier (par défaut).
+
+*-r, --recursive*::
+  Parcours et réécriture du système de fichiers. Les montages liés sont d’abord démontés puis restaurés.
+
+*-g, --gui*::
+  Ouvrir la fenêtre wxWidgets (nécessite `DISPLAY` ou Wayland). _DEVICE/FILE_ optionnel ; File → Open / Device, puis Start.
+
+*-v, --verbose*::
+  Augmenter la journalisation.
+
+*-q, --quiet*::
+  Diminuer la journalisation.
+
+*-h, --help*::
+  Afficher l’aide et quitter.
+
+*--version*::
+  Afficher la version et quitter.
+
+== Code de sortie
+
+*0*:: Succès (des erreurs d’E/S sur certaines extents peuvent quand même être enregistrées).
+*1*:: Échec.
+*2*:: Erreur d’usage.
+
+== Notes
+
+Les périphériques bloc exigent en général root. Les montages liés sont démontés pour la réécriture puis restaurés. SHA-1 est calculé sur le contenu monté après réécriture. L’espace libre/non alloué n’est pas réécrit. Après une passe, les mauvaises extents peuvent être exportées en liste style badblocks (la GUI propose un dialogue d’enregistrement). Un fichier SQLite peut contenir plusieurs périphériques (`device`, `volume`, `object`, `folder`, `file`). Un SHA-1 stocké reste valide 183 jours sauf changement dans Preferences.
+
+== Voir aussi
+
+*badblocks*(8), *e2fsck*(8)
+
+== Auteur
+
+{project-author} <{project-email}>

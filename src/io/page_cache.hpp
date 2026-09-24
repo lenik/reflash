@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <string>
 
-namespace sdmsg {
+namespace reflash {
 
 enum class FlushState : std::uint8_t {
     /* Still dirty/writeback, or (mincore) still resident. */
@@ -38,4 +38,4 @@ bool kick_writeback(int fd, std::uint64_t offset, std::uint64_t length, std::str
 /* Wait until the range has been written back to the device. */
 bool wait_flushed(int fd, std::uint64_t offset, std::uint64_t length, std::string *err = nullptr);
 
-} /* namespace sdmsg */
+} /* namespace reflash */

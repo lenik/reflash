@@ -1,7 +1,7 @@
-Source: sdmsg
+Source: reflash
 Section: utils
 Priority: optional
-Maintainer: Lenik <sdmsg@bodz.net>
+Maintainer: Lenik <reflash@bodz.net>
 Build-Depends:
     debhelper-compat (= 13),
     meson,
@@ -11,19 +11,20 @@ Build-Depends:
     libsqlite3-dev,
     libssl-dev,
     libwxgtk3.2-dev,
-    asciidoctor
+    asciidoctor,
+    gettext
 Standards-Version: 4.6.0
-Homepage: https://github.com/lenik/sdmsg
+Homepage: https://github.com/lenik/reflash
 Rules-Requires-Root: no
 
-Package: sdmsg
+Package: reflash
 Architecture: any
 Depends:
     ${shlibs:Depends},
     ${misc:Depends}
 Suggests: sqlitebrowser
 Description: Refresh flash storage by rewriting device data in place
- sdmsg ("SD massage") rewrites block devices or regular files in place to
+ reflash ("SD massage") rewrites block devices or regular files in place to
  fight bit-rot on flash media that sits unused. Supports linear raw rewrite
  and recursive FAT/exFAT/NTFS/ext walks with SQLite tracking and an optional
  wxWidgets progress UI.

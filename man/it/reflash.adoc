@@ -1,0 +1,81 @@
+= reflash(1)
+Lenik <reflash@bodz.net>
+v{project-version}, {project-year}
+:doctype: manpage
+:manmanual: Comandi utente
+:mansource: reflash
+:man-linkstyle: blue R <>
+:nofooter:
+
+== Name
+
+reflash - riscrivere i dati del dispositivo o file sul posto (massaggio SD)
+
+== Synopsis
+
+*reflash* [_OPZIONE_]... [_DEVICE/FILE_]
+
+== Description
+
+*reflash* riscrive un dispositivo a blocchi o un file regolare *sul posto* affinché il flash inutilizzato non perda carica e non corrompa i dati. Ogni unità di I/O viene letta e riscritta invariata. Progresso, velocità ed ETA vanno su stderr. È disponibile un’UI wxWidgets con *--gui* se c’è un display; con *--gui*, _DEVICE/FILE_ può essere omesso e aperto dal menu File.
+
+Sono supportati due modi:
+
+* *linear* (predefinito) -- tratta il bersaglio come intervallo di byte grezzo. Se c’è una tabella delle partizioni, tabella e ciascuna partizione sono riscritte separatamente.
+* *recursive* -- attraversa un filesystem non montato (FAT/exFAT, NTFS, ext2/3/4) usando strutture on-disk (non VFS montato) e riscrive i dati dei file più i metadati essenziali.
+
+Un database SQLite registra percorsi, SHA-1, contatori massage/verify ed extent danneggiati. Tabelle delle partizioni e metadati FS usano percorsi speciali come `::mbr`, `::gpt`, `::part-N`, `::boot` e `::superblock`.
+
+La riscrittura agisce sempre su un dispositivo *smontato* e tocca solo dati allocati (lo spazio libero è saltato). Dati NTFS compressi o cifrati sono riscritti come su disco (nessuna decifratura). Gli SHA-1 sono calcolati *dopo* la riscrittura, con FS montato (sola lettura basta). I mount esistenti sono smontati e poi ripristinati (incluso lettura/scrittura). SHA-1 solo con database in uso: sempre in headless; in GUI solo dopo Database → Open. La GUI non chiede mai sul terminale. File regolare o loop montato in sola lettura con FUSE. Disco reale: udisks, poi `sudo`/`pkexec`. (*fakeroot* non concede `CAP_SYS_ADMIN`.) Edit → Dry-run legge la scansione e non scrive.
+
+I file regolari sono aperti in lettura/scrittura senza troncamento.
+
+== Opzioni
+
+*-b, --block-size* _NUM_::
+  Dimensione blocco I/O in byte. Predefinito: auto (`BLKSSZGET`, `st_blksize` del file, o 4096).
+
+*-d, --sqlite-db* _FILE_::
+  Database SQLite di gestione. Predefinito: `~/.cache/reflash/<name>.sqlite`.
+
+*-t, --test*::
+  Verifica contro il database (lettura + SHA-1); non riscrivere. Sempre headless.
+
+*-l, --linear*::
+  Riscrittura grezza dispositivo/file (predefinito).
+
+*-r, --recursive*::
+  Percorso e riscrittura del filesystem. I mount correlati sono prima smontati e poi ripristinati.
+
+*-g, --gui*::
+  Apri la finestra wxWidgets (richiede `DISPLAY` o Wayland). _DEVICE/FILE_ opzionale; File → Open / Device, poi Start.
+
+*-v, --verbose*::
+  Aumenta la registrazione.
+
+*-q, --quiet*::
+  Diminuisci la registrazione.
+
+*-h, --help*::
+  Mostra l’aiuto ed esci.
+
+*--version*::
+  Mostra la versione ed esci.
+
+== Stato di uscita
+
+*0*:: Successo (errori I/O su singoli extent possono comunque essere registrati nel DB).
+*1*:: Fallimento.
+*2*:: Errore di uso.
+
+== Note
+
+I dispositivi a blocchi tipicamente richiedono root. I mount correlati sono smontati per la riscrittura e poi ripristinati. SHA-1 è calcolato sul contenuto montato dopo la riscrittura. Lo spazio libero/non allocato non è riscritto. Dopo un’esecuzione, gli extent danneggiati possono essere esportati come elenco stile badblocks (la GUI offre un dialogo di salvataggio). Un file SQLite può contenere più dispositivi (`device`, `volume`, `object`, `folder`, `file`). Uno SHA-1 memorizzato resta valido 183 giorni salvo modifica in Preferences.
+
+== Vedere anche
+
+*badblocks*(8), *e2fsck*(8)
+
+== Autore
+
+{project-author} <{project-email}>

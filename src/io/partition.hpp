@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-namespace sdmsg {
+namespace reflash {
 
 struct Partition {
     int index = 0; /* 1-based */
@@ -32,4 +32,4 @@ struct PartitionMap {
 /* Probe first sectors of an already-opened device (or raw image). */
 bool probe_partitions(class Device &dev, PartitionMap &out, std::string *err = nullptr);
 
-} /* namespace sdmsg */
+} /* namespace reflash */

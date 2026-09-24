@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -21,7 +21,7 @@
 #include <thread>
 #include <unistd.h>
 
-namespace sdmsg {
+namespace reflash {
 
 namespace {
 
@@ -94,7 +94,7 @@ static void record_rewrite(Store &store, const std::string &path, std::uint64_t 
 }
 
 static void publish_fail(Progress &progress, const std::string &msg) {
-    fprintf(stderr, "sdmsg: %s\n", msg.c_str());
+    fprintf(stderr, "reflash: %s\n", msg.c_str());
     progress.reset(1, 4096);
     progress.log(0, 4096, CellStatus::ReadErr, msg);
     progress.set_phase("failed");
@@ -404,4 +404,4 @@ void MassageEngine::join() {
         worker_.join();
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

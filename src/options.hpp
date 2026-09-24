@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <string>
 
-namespace sdmsg {
+namespace reflash {
 
 enum class RunMode { Linear, Recursive };
 enum class Action { Massage, Test };
@@ -47,4 +47,4 @@ bool parse_options(int argc, char **argv, Options &out);
 void print_usage(FILE *out);
 void print_version();
 
-} /* namespace sdmsg */
+} /* namespace reflash */

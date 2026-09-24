@@ -10,12 +10,12 @@
 #   host.sh dump [file]
 #
 # Environment:
-#   SDMSG_SRCDIR       project root (default: packaging/../..)
-#   SDMSG_FORCE_LOCAL  skip can-local check (set on a build host by gh-makerelease)
+#   REFLASH_SRCDIR       project root (default: packaging/../..)
+#   REFLASH_FORCE_LOCAL  skip can-local check (set on a build host by gh-makerelease)
 set -euo pipefail
 
 _LIBDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-SDMSG_SRCDIR=${SDMSG_SRCDIR:-$(cd "$_LIBDIR/../.." && pwd)}
+REFLASH_SRCDIR=${REFLASH_SRCDIR:-$(cd "$_LIBDIR/../.." && pwd)}
 
 _usage() {
     sed -n '2,14p' "$0" | sed 's/^# \{0,1\}//'
@@ -108,7 +108,7 @@ find_build_host_file() {
     local kind=$1
     local k base
     for k in $(_kind_fallbacks "$kind"); do
-        for base in "$SDMSG_SRCDIR/.config/sdmsg" "$HOME/.config/sdmsg"; do
+        for base in "$REFLASH_SRCDIR/.config/reflash" "$HOME/.config/reflash"; do
             if [[ -f $base/$k.build-host ]]; then
                 printf '%s\n' "$base/$k.build-host"
                 return 0
@@ -243,7 +243,7 @@ can_local() {
 cmd_dump() {
     local file=${1:-}
     if [[ -z $file ]]; then
-        file=$(find_build_host_file "${SDMSG_PACKAGING:-win32}") || {
+        file=$(find_build_host_file "${REFLASH_PACKAGING:-win32}") || {
             echo "no .build-host file" >&2
             return 1
         }
@@ -267,7 +267,7 @@ cmd_dump() {
     if ((BH_N > 0)); then
         echo "---"
         echo "last_build_dir=${BH_BUILD_DIR[$((BH_N - 1))]}"
-        echo "last_shell=$(last_shell "${SDMSG_PACKAGING:-}")"
+        echo "last_shell=$(last_shell "${REFLASH_PACKAGING:-}")"
         if last_preserved; then
             echo "last_preserved=true"
         else
@@ -282,7 +282,7 @@ cmd_run() {
     if [[ ${1:-} == -- ]]; then
         shift
     fi
-    if [[ ${SDMSG_FORCE_LOCAL:-} == 1 ]]; then
+    if [[ ${REFLASH_FORCE_LOCAL:-} == 1 ]]; then
         exec "$@"
     fi
     if can_local "$kind"; then
@@ -292,8 +292,8 @@ cmd_run() {
     echo "  For remote builds, use gh-makerelease with a .build-host file:" >&2
     local k
     for k in $(_kind_fallbacks "$kind"); do
-        echo "    $SDMSG_SRCDIR/.config/sdmsg/$k.build-host" >&2
-        echo "    $HOME/.config/sdmsg/$k.build-host" >&2
+        echo "    $REFLASH_SRCDIR/.config/reflash/$k.build-host" >&2
+        echo "    $HOME/.config/reflash/$k.build-host" >&2
     done
     return 2
 }

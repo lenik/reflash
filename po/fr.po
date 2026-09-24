@@ -1,0 +1,116 @@
+# French translations for reflash package.
+# Copyright (C) 2026 THE reflash'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the reflash package.
+# Automatically generated, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: reflash 1.1.0\n"
+"Report-Msgid-Bugs-To: reflash@bodz.net\n"
+"POT-Creation-Date: 2026-09-24 14:53+0800\n"
+"PO-Revision-Date: 2026-09-24 14:53+0800\n"
+"Last-Translator: Lenik <reflash@bodz.net>\n"
+"Language-Team: French\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: src/options.cpp:25
+msgid "Usage: reflash [OPTIONS] [DEVICE/FILE]\n"
+msgstr "Usage : reflash [OPTIONS] [DEVICE/FILE]\n"
+
+#: src/options.cpp:26
+msgid "Rewrite device/file data in place to refresh flash storage (\"massage\").\n"
+msgstr "Réécrire les données du périphérique/fichier sur place pour rafraîchir le stockage flash (« massage »).\n"
+
+#: src/options.cpp:29
+msgid "I/O block size (default: auto-detect)\n"
+msgstr "Taille de bloc E/S (par défaut : auto)\n"
+
+#: src/options.cpp:31
+msgid "SQLite management database\n"
+msgstr "Base SQLite de gestion\n"
+
+#: src/options.cpp:33
+msgid "Verify against DB (no rewrite)\n"
+msgstr "Vérifier contre la BD (sans réécriture)\n"
+
+#: src/options.cpp:35
+msgid "Raw whole-device/file rewrite (default)\n"
+msgstr "Réécriture brute périphérique/fichier (par défaut)\n"
+
+#: src/options.cpp:37
+msgid "Filesystem walk/rewrite (unmounted automatically)\n"
+msgstr "Parcours/réécriture du système de fichiers (démontage auto)\n"
+
+#: src/options.cpp:39
+msgid "Open wxWidgets UI (requires a display)\n"
+msgstr "Ouvrir l’UI wxWidgets (nécessite un affichage)\n"
+
+#: src/options.cpp:41
+msgid "More logging\n"
+msgstr "Plus de journalisation\n"
+
+#: src/options.cpp:43
+msgid "Less logging\n"
+msgstr "Moins de journalisation\n"
+
+#: src/options.cpp:45
+msgid "Show this help\n"
+msgstr "Afficher cette aide\n"
+
+#: src/options.cpp:47
+msgid "Show version\n"
+msgstr "Afficher la version\n"
+
+#: src/options.cpp:49
+msgid "Headless by default (DEVICE/FILE required). Progress goes to stderr.\n"
+msgstr "Sans interface par défaut (DEVICE/FILE requis). La progression va sur stderr.\n"
+
+#: src/options.cpp:50
+msgid "With -g/--gui, DEVICE/FILE is optional; open a target from the File menu.\n"
+msgstr "Avec -g/--gui, DEVICE/FILE est optionnel ; ouvrez une cible depuis le menu Fichier.\n"
+
+#: src/options.cpp:51
+#, c-format
+msgid "Report bugs to: <%s>\n"
+msgstr "Signaler les bogues à : <%s>\n"
+
+#: src/options.cpp:55
+#, c-format
+msgid "reflash %s\n"
+msgstr "reflash %s\n"
+
+#: src/options.cpp:56
+#, c-format
+msgid "Copyright (C) %d %s\n"
+msgstr "Copyright (C) %d %s\n"
+
+#: src/options.cpp:57
+msgid "License AGPL-3.0-or-later: <https://www.gnu.org/licenses/agpl-3.0.html>\n"
+msgstr "Licence AGPL-3.0-or-later : <https://www.gnu.org/licenses/agpl-3.0.html>\n"
+
+#: src/options.cpp:58
+msgid "This is free software: you are free to change and redistribute it.\n"
+msgstr "Ceci est un logiciel libre : vous êtes libre de le modifier et de le redistribuer.\n"
+
+#: src/options.cpp:59
+msgid "This project opposes AI exploitation and AI hegemony.\n"
+msgstr "Ce projet s’oppose à l’exploitation et à l’hégémonie de l’IA.\n"
+
+#: src/options.cpp:87
+#, c-format
+msgid "reflash: invalid --block-size\n"
+msgstr "reflash : --block-size invalide\n"
+
+#: src/options.cpp:130
+#, c-format
+msgid "reflash: missing DEVICE/FILE\n"
+msgstr "reflash : DEVICE/FILE manquant\n"
+
+#: src/options.cpp:135
+#, c-format
+msgid "reflash: too many arguments\n"
+msgstr "reflash : trop d’arguments\n"

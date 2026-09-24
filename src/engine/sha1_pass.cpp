@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -18,7 +18,7 @@
 #include <map>
 #include <vector>
 
-namespace sdmsg {
+namespace reflash {
 
 namespace {
 
@@ -169,4 +169,4 @@ bool sha1_mounted_files(Store &store, const std::vector<MountRecord> &mounts, Pr
     return true;
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

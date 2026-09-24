@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace sdmsg {
+namespace reflash {
 
 struct BlockDevInfo {
     std::string path;      /* /dev/sda, /dev/sda1 */
@@ -30,4 +30,4 @@ std::vector<BlockDevInfo> list_block_devices();
 /* Group label for Device submenu: Disks / Removable / Loop / Other */
 std::string device_group_label(const BlockDevInfo &d);
 
-} /* namespace sdmsg */
+} /* namespace reflash */

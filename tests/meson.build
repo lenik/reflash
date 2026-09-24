@@ -23,7 +23,8 @@ massage_test_exe = executable(
         '../src/fs/ext.cpp',
     ],
     include_directories: include_directories('../src', '..'),
-    dependencies: [sqlite_dep, crypto_dep],
+    dependencies: [sqlite_dep, crypto_dep, bas_c_dep],
+    cpp_args: bas_args,
     install: false,
 )
 
@@ -60,7 +61,8 @@ gui_e2e_exe = executable(
         '../src/gui/session.cpp',
     ],
     include_directories: include_directories('../src', '..'),
-    dependencies: [sqlite_dep, crypto_dep, wx_dep],
+    dependencies: [sqlite_dep, crypto_dep, wx_dep, bas_c_dep],
+    cpp_args: bas_args,
     install: false,
 )
 

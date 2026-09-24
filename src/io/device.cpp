@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -29,7 +29,7 @@
 #define O_DIRECT 0
 #endif
 
-namespace sdmsg {
+namespace reflash {
 
 Device::~Device() { close(); }
 
@@ -182,4 +182,4 @@ bool Device::pwrite_sync(const void *buf, std::uint64_t offset, std::size_t len,
     return true;
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

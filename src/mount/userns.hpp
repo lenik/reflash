@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -7,7 +7,7 @@
 
 #include <string>
 
-namespace sdmsg {
+namespace reflash {
 
 /* True after this process successfully entered a user+mount namespace. */
 bool in_user_mount_ns();
@@ -22,4 +22,4 @@ bool in_user_mount_ns();
  */
 bool ensure_user_mount_ns(std::string *err = nullptr);
 
-} /* namespace sdmsg */
+} /* namespace reflash */

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -22,7 +22,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-namespace sdmsg {
+namespace reflash {
 
 namespace {
 
@@ -140,4 +140,4 @@ bool ensure_user_mount_ns(std::string *err) {
     return true;
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

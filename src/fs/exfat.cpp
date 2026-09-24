@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -12,7 +12,7 @@
 #include <set>
 #include <vector>
 
-namespace sdmsg {
+namespace reflash {
 
 namespace {
 
@@ -242,4 +242,4 @@ bool scan_exfat(Device &dev, std::uint64_t base, FsScanResult &out) {
     return walk(dev, g, fat, g.root_cluster, "", out);
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

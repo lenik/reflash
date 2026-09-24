@@ -8,7 +8,7 @@ HOST_SH  := $(abspath $(_LIBDIR)/host.sh)
 SRCDIR   ?= $(abspath $(_LIBDIR)/../..)
 PACKAGEDIR ?= $(abspath $(_LIBDIR)/..)
 
-NAME    ?= sdmsg
+NAME    ?= reflash
 VERSION := $(shell cd "$(SRCDIR)" && { zfr version 2>/dev/null || true; })
 ifeq ($(strip $(VERSION)),)
 VERSION := $(shell head -n1 "$(SRCDIR)/VERSION" 2>/dev/null)
@@ -18,7 +18,7 @@ ifeq ($(strip $(VERSION)),)
 VERSION := 0.0.0
 endif
 
-export SDMSG_SRCDIR := $(SRCDIR)
+export REFLASH_SRCDIR := $(SRCDIR)
 
 # Wrap a local recipe: runs here if native/cross tools exist.
 # Remote .build-host builds are done by gh-makerelease, not host.sh.

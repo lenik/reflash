@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # stub — align with debian/control and Meson install
-pkgname=sdmsg
+pkgname=reflash
 pkgver=0.0.0
 pkgrel=1
 pkgdesc="Refresh flash storage by rewriting device data in place"
 arch=('x86_64' 'aarch64')
-url="https://github.com/lenik/sdmsg"
+url="https://github.com/lenik/reflash"
 license=('AGPL-3.0-or-later')
 depends=('sqlite' 'openssl' 'wxwidgets-gtk3')
 makedepends=('meson' 'ninja' 'asciidoctor' 'pkgconf')

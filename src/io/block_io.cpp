@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -13,7 +13,7 @@
 #include <cstring>
 #include <vector>
 
-namespace sdmsg {
+namespace reflash {
 
 namespace {
 
@@ -228,4 +228,4 @@ BlockIoResult rewrite_range(Device &dev, std::uint64_t offset, std::uint64_t len
     return result;
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

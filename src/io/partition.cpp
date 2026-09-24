@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -10,7 +10,7 @@
 #include <cstring>
 #include <vector>
 
-namespace sdmsg {
+namespace reflash {
 
 namespace {
 
@@ -115,4 +115,4 @@ bool probe_partitions(Device &dev, PartitionMap &out, std::string *err) {
     return true;
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

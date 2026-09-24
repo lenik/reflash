@@ -1,0 +1,81 @@
+= reflash(1)
+Lenik <reflash@bodz.net>
+v{project-version}, {project-year}
+:doctype: manpage
+:manmanual: 사용자 명령
+:mansource: reflash
+:man-linkstyle: blue R <>
+:nofooter:
+
+== Name
+
+reflash - 장치 또는 파일 데이터를 제자리에서 다시 쓰기(SD 마사지)
+
+== Synopsis
+
+*reflash* [_옵션_]... [_DEVICE/FILE_]
+
+== Description
+
+*reflash*는 블록 장치 또는 일반 파일을 *제자리에서* 다시 써서, 방치된 플래시가 방전되어 데이터가 손상되지 않게 합니다. 각 I/O 단위를 읽은 뒤 그대로 다시 씁니다. 진행률·속도·ETA는 표준 오류로 갑니다. 디스플레이가 있으면 *--gui*로 wxWidgets UI를 쓸 수 있습니다. *--gui*에서는 _DEVICE/FILE_을 생략하고 File 메뉴에서 열 수 있습니다.
+
+두 가지 모드를 지원합니다:
+
+* *linear*(기본) -- 대상을 원시 바이트 범위로 취급합니다. 파티션 테이블이 있으면 테이블과 각 파티션을 따로 다시 씁니다.
+* *recursive* -- 마운트되지 않은 파일 시스템(FAT/exFAT, NTFS, ext2/3/4)을 디스크상 구조로 순회하고(마운트된 VFS 아님) 파일 데이터와 필수 메타데이터를 다시 씁니다.
+
+SQLite 데이터베이스는 경로, SHA-1, massage/verify 횟수, 불량 extent를 기록합니다. 파티션 테이블과 파일 시스템 메타데이터는 `::mbr`, `::gpt`, `::part-N`, `::boot`, `::superblock` 같은 특수 경로를 씁니다.
+
+다시 쓰기는 항상 *마운트 해제된* 장치에 대해 수행하며 할당된 데이터만 다룹니다(여유 공간 건너뜀). 압축/암호화 NTFS 데이터는 디스크에 저장된 그대로 다시 씁니다(복호화 없음). SHA-1은 다시 쓰기 *이후* 마운트된 FS에서 계산합니다(읽기 전용으로 충분). 기존 마운트는 해제했다가 복원합니다(읽기/쓰기 포함). DB 사용 시에만 SHA-1: 헤드리스에서는 항상, GUI에서는 Database → Open 이후만. GUI는 터미널에 묻지 않습니다. 일반 파일이나 loop는 FUSE로 읽기 전용 마운트. 실제 디스크는 udisks, 이어 `sudo`/`pkexec`. (*fakeroot*는 `CAP_SYS_ADMIN`을 줄 수 없어 도움이 되지 않습니다.) Edit → Dry-run은 스캔만 읽고 쓰지 않습니다.
+
+일반 파일은 자르지 않고 읽기/쓰기로 엽니다.
+
+== 옵션
+
+*-b, --block-size* _NUM_::
+  I/O 블록 크기(바이트). 기본: 자동(`BLKSSZGET`, 파일 `st_blksize`, 또는 4096).
+
+*-d, --sqlite-db* _FILE_::
+  SQLite 관리 데이터베이스. 기본: `~/.cache/reflash/<name>.sqlite`.
+
+*-t, --test*::
+  DB와 대조 검증(읽기 + SHA-1); 다시 쓰지 않음. 항상 헤드리스.
+
+*-l, --linear*::
+  장치/파일 원시 전체 다시 쓰기(기본).
+
+*-r, --recursive*::
+  파일 시스템을 순회하며 다시 씁니다. 관련 마운트는 먼저 해제했다가 복원합니다.
+
+*-g, --gui*::
+  wxWidgets 창 열기(`DISPLAY` 또는 Wayland 필요). _DEVICE/FILE_은 선택; File → Open / Device 후 Start.
+
+*-v, --verbose*::
+  로그를 늘립니다.
+
+*-q, --quiet*::
+  로그를 줄입니다.
+
+*-h, --help*::
+  도움말을 표시하고 종료합니다.
+
+*--version*::
+  버전을 표시하고 종료합니다.
+
+== 종료 상태
+
+*0*:: 성공(개별 extent의 I/O 오류는 DB에 기록될 수 있음).
+*1*:: 실패.
+*2*:: 사용법 오류.
+
+== 참고
+
+블록 장치는 보통 root가 필요합니다. 관련 마운트는 다시 쓰기 때 해제했다가 복원합니다. SHA-1은 다시 쓰기 후 마운트된 파일 내용에서 계산합니다. 여유/미할당 공간은 다시 쓰지 않습니다. 실행 후 불량 extent를 badblocks 스타일 목록으로보낼 수 있습니다(GUI에 저장 대화상자). 한 SQLite 파일에 여러 장치를 담을 수 있습니다(`device`, `volume`, `object`, `folder`, `file`). 저장된 SHA-1은 Preferences에서 바꾸지 않으면 183일 동안 유효합니다.
+
+== 관련 항목
+
+*badblocks*(8), *e2fsck*(8)
+
+== 저자
+
+{project-author} <{project-email}>

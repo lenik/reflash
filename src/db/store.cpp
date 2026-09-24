@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -20,7 +20,7 @@
 
 #include <sqlite3.h>
 
-namespace sdmsg {
+namespace reflash {
 
 namespace {
 
@@ -1315,7 +1315,7 @@ bool Store::delete_folder(std::int64_t folder_id, std::string *err) {
 
 std::string default_db_path(const std::string &target) {
     const char *home = getenv("HOME");
-    std::string cache = home ? std::string(home) + "/.cache/sdmsg" : "/tmp/sdmsg";
+    std::string cache = home ? std::string(home) + "/.cache/reflash" : "/tmp/reflash";
     mkdir(cache.c_str(), 0755);
 
     std::string base = target;
@@ -1329,4 +1329,4 @@ std::string default_db_path(const std::string &target) {
     return cache + "/" + base + ".sqlite";
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -12,7 +12,7 @@
 #include <wx/imaglist.h>
 #include <wx/sizer.h>
 
-namespace sdmsg {
+namespace reflash {
 
 namespace {
 
@@ -117,4 +117,4 @@ void LogPanel::refill() {
     }
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

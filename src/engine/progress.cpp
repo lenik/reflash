@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -11,7 +11,7 @@
 #include <cmath>
 #include <ctime>
 
-namespace sdmsg {
+namespace reflash {
 
 double Progress::now_sec() {
     using clock = std::chrono::steady_clock;
@@ -252,4 +252,4 @@ std::vector<LogEntry> Progress::all_logs() const {
     return logs_;
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

@@ -2,7 +2,7 @@
 ; Inno Setup script. Makefile passes /DMyAppName= /DMyAppVersion= /DMyStage=
 
 #ifndef MyAppName
-  #define MyAppName "sdmsg"
+  #define MyAppName "reflash"
 #endif
 #ifndef MyAppVersion
   #define MyAppVersion "0.0.0"

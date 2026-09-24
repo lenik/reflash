@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -7,7 +7,7 @@
 
 #include <string>
 
-namespace sdmsg {
+namespace reflash {
 
 struct FuseUserMountStatus {
     bool fuse_group_exists = false;
@@ -35,4 +35,4 @@ bool apply_fuse_user_mounts(const FuseUserMountDesire &desire, std::string *err 
 /* Drop membership / setuid / caps; leave the fuse group itself. */
 bool disable_fuse_user_mounts(std::string *err = nullptr);
 
-} /* namespace sdmsg */
+} /* namespace reflash */

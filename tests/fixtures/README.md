@@ -1,10 +1,10 @@
-# Regenerated FS images for sdmsg integration tests
+# Regenerated FS images for reflash integration tests
 #
 # Build (from repo root):
 #   ./scripts/make-testbases.sh /home/drive/test tests/fixtures
 #
 # Run scenarios:
-#   SDMSG_BIN=/tmp/sdmsg-build/sdmsg ./scripts/run-testdrive.sh
+#   REFLASH_BIN=/tmp/reflash-build/reflash ./scripts/run-testdrive.sh
 #
 # Images are ~2x the source tree size (half data / half spare), intentionally
 # fragmented. They are gitignored — rebuild locally when needed.

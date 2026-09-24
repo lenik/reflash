@@ -5,7 +5,7 @@ Platform recipes aligned with `debian/`. Version: `zfr version`.
 Local builds: `make -C packaging/<platform>` (or `… local`). `lib/host.sh`
 checks whether this host can build a target (`can-local`).
 
-Remote builds (`.config/sdmsg/<packaging>.build-host`) are orchestrated by
+Remote builds (`.config/reflash/<packaging>.build-host`) are orchestrated by
 **gh-makerelease**, not by these Makefiles.
 
 | Platform | Directory | Build |

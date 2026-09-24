@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -11,7 +11,7 @@
 #include <wx/image.h>
 #include <wx/wx.h>
 
-namespace sdmsg {
+namespace reflash {
 
 Options g_gui_opts;
 
@@ -48,6 +48,6 @@ int run_gui(Options opts, int &argc, char **argv) {
     return wxEntry(argc, argv);
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */
 
-wxIMPLEMENT_APP_NO_MAIN(sdmsg::SdmsgApp);
+wxIMPLEMENT_APP_NO_MAIN(reflash::SdmsgApp);

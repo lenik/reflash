@@ -1,24 +1,24 @@
 #!/usr/bin/env bash
-# Copy testbases → testdrive.* and run sdmsg scenarios.
-# Usage: run-testdrive.sh [FIXTURES_DIR] [SDMSG_BIN]
+# Copy testbases → testdrive.* and run reflash scenarios.
+# Usage: run-testdrive.sh [FIXTURES_DIR] [REFLASH_BIN]
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 FIX="${1:-$ROOT/tests/fixtures}"
-BIN="${2:-${SDMSG_BIN:-}}"
+BIN="${2:-${REFLASH_BIN:-}}"
 if [[ -z "$BIN" ]]; then
-  for c in "$ROOT/build/sdmsg" /tmp/sdmsg-build/sdmsg "$ROOT/../build/sdmsg"; do
+  for c in "$ROOT/build/reflash" /tmp/reflash-build/reflash "$ROOT/../build/reflash"; do
     if [[ -x "$c" ]]; then BIN=$c; break; fi
   done
 fi
 if [[ ! -x "$BIN" ]]; then
-  echo "sdmsg binary not found; set SDMSG_BIN=" >&2
+  echo "reflash binary not found; set REFLASH_BIN=" >&2
   exit 1
 fi
 
-DBDIR=$(mktemp -d /tmp/sdmsg-testdrive-db.XXXXXX)
-WORKDIR=$(mktemp -d /tmp/sdmsg-testdrive-work.XXXXXX)
-export SDMSG_SHA1="${SDMSG_SHA1:-skip}"  # images often need privileged mount for SHA-1
+DBDIR=$(mktemp -d /tmp/reflash-testdrive-db.XXXXXX)
+WORKDIR=$(mktemp -d /tmp/reflash-testdrive-work.XXXXXX)
+export REFLASH_SHA1="${REFLASH_SHA1:-skip}"  # images often need privileged mount for SHA-1
 PASS=0
 FAIL=0
 REPORT=()
@@ -95,7 +95,7 @@ flip_bits_in_mounted_file() {
   udisksctl loop-delete -b "$dev" >/dev/null
 }
 
-run_sdmsg() {
+run_reflash() {
   local img=$1
   local mode=$2  # linear|recursive
   local db=$3
@@ -136,7 +136,7 @@ test_fs() {
 
   # 1) Massage original data (must succeed, content-preserving for recursive)
   log "-- massage #1 (clean image, recursive)"
-  if run_sdmsg "$drive" recursive "$db1"; then
+  if run_reflash "$drive" recursive "$db1"; then
     ok "recursive massage #1 exit 0"
   else
     bad "recursive massage #1 failed"
@@ -157,7 +157,7 @@ test_fs() {
   cp -a "$base" "$drive"
   hash0=$(sha256_file "$drive")
   log "-- massage linear on clean copy"
-  if run_sdmsg "$drive" linear "$DBDIR/$fstype-lin.sqlite"; then
+  if run_reflash "$drive" linear "$DBDIR/$fstype-lin.sqlite"; then
     ok "linear massage exit 0"
   else
     bad "linear massage failed"
@@ -175,7 +175,7 @@ test_fs() {
   flip_bits_in_mounted_file "$drive" "$fstype"
   local hash_flip
   hash_flip=$(sha256_file "$drive")
-  if run_sdmsg "$drive" recursive "$db2"; then
+  if run_reflash "$drive" recursive "$db2"; then
     ok "recursive massage after bit-flip exit 0"
   else
     bad "recursive massage after bit-flip failed"
@@ -194,7 +194,7 @@ test_fs() {
   log "-- raw 64-byte XOR in image + linear massage"
   flip_bits_in_image "$drive"
   hash_flip=$(sha256_file "$drive")
-  if run_sdmsg "$drive" linear "$DBDIR/$fstype-raw.sqlite"; then
+  if run_reflash "$drive" linear "$DBDIR/$fstype-raw.sqlite"; then
     ok "linear after raw XOR exit 0"
   else
     bad "linear after raw XOR failed"
@@ -209,7 +209,7 @@ test_fs() {
   # 5) Pause/resume smoke: run with tiny block size
   cp -a "$base" "$drive"
   log "-- small block-size recursive smoke"
-  if run_sdmsg "$drive" recursive "$DBDIR/$fstype-bs.sqlite" "-b 512"; then
+  if run_reflash "$drive" recursive "$DBDIR/$fstype-bs.sqlite" "-b 512"; then
     ok "block-size 512 recursive ok"
   else
     bad "block-size 512 recursive failed"
@@ -217,9 +217,9 @@ test_fs() {
 
   # 6) Double massage idempotence
   cp -a "$base" "$drive"
-  run_sdmsg "$drive" recursive "$DBDIR/$fstype-id1.sqlite" || true
+  run_reflash "$drive" recursive "$DBDIR/$fstype-id1.sqlite" || true
   hash0=$(sha256_file "$drive")
-  if run_sdmsg "$drive" recursive "$DBDIR/$fstype-id2.sqlite"; then
+  if run_reflash "$drive" recursive "$DBDIR/$fstype-id2.sqlite"; then
     hash1=$(sha256_file "$drive")
     if [[ "$hash0" == "$hash1" ]]; then
       ok "second massage idempotent"
@@ -231,9 +231,9 @@ test_fs() {
   fi
 }
 
-log "sdmsg: $BIN"
+log "reflash: $BIN"
 log "fixtures: $FIX"
-log "SDMSG_SHA1=$SDMSG_SHA1"
+log "REFLASH_SHA1=$REFLASH_SHA1"
 
 # Content integrity: after recursive massage, every regular file must match testbase.
 compare_trees() {
@@ -278,7 +278,7 @@ test_refuse_mounted() {
   local dev mnt
   dev=$(udisksctl loop-setup -f "$drive" | awk '{for(i=1;i<=NF;i++){gsub(/\.$/,"",$i); if($i~/^\/dev\/loop[0-9]+$/){print $i;exit}}}')
   mnt=$(udisksctl mount -b "$dev" | awk '{print $NF}')
-  if "$BIN" -r -d "$DBDIR/refuse.sqlite" "$drive" 2>/tmp/sdmsg-refuse.err; then
+  if "$BIN" -r -d "$DBDIR/refuse.sqlite" "$drive" 2>/tmp/reflash-refuse.err; then
     bad "should refuse massage while mounted"
   else
     ok "refuses recursive while mounted"
@@ -299,7 +299,7 @@ for fs in ext4 fat32 exfat ntfs; do
   drive="$FIX/testdrive.$fs"
   [[ -f "$base" ]] || continue
   cp -a "$base" "$drive"
-  if run_sdmsg "$drive" recursive "$DBDIR/integrity-$fs.sqlite"; then
+  if run_reflash "$drive" recursive "$DBDIR/integrity-$fs.sqlite"; then
     compare_trees "$base" "$drive" "$fs after recursive massage"
   else
     bad "massage for integrity $fs"
@@ -316,7 +316,7 @@ if [[ -f "$FIX/testbase.linear" ]]; then
   log "======== linear blob ========"
   cp -a "$FIX/testbase.linear" "$FIX/testdrive.linear"
   h0=$(sha256_file "$FIX/testdrive.linear")
-  if run_sdmsg "$FIX/testdrive.linear" linear "$DBDIR/linear.sqlite"; then
+  if run_reflash "$FIX/testdrive.linear" linear "$DBDIR/linear.sqlite"; then
     ok "testdrive.linear massage"
   else
     bad "testdrive.linear massage"

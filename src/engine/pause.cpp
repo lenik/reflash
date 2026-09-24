@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -9,7 +9,7 @@
 #include <thread>
 #include <chrono>
 
-namespace sdmsg {
+namespace reflash {
 
 bool PauseControl::wait_if_paused() {
     while (paused_.load(std::memory_order_acquire)) {
@@ -20,4 +20,4 @@ bool PauseControl::wait_if_paused() {
     return !stop_.load(std::memory_order_acquire);
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

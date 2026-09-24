@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -10,7 +10,7 @@
 #include <wx/string.h>
 #include <wx/window.h>
 
-namespace sdmsg {
+namespace reflash {
 
 /*
  * Drop-in for wxMessageBox: same argument order, also prints to stderr.
@@ -25,10 +25,10 @@ inline int alert_box(const wxString &message, const wxString &caption = wxMessag
         tag = "warn";
     else if (style & wxICON_QUESTION)
         tag = "ask";
-    std::fprintf(stderr, "sdmsg: %s: [%s] %s\n", tag, caption.utf8_str().data(),
+    std::fprintf(stderr, "reflash: %s: [%s] %s\n", tag, caption.utf8_str().data(),
                  message.utf8_str().data());
     std::fflush(stderr);
     return wxMessageBox(message, caption, style, parent);
 }
 
-} /* namespace sdmsg */
+} /* namespace reflash */

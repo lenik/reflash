@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -24,7 +24,7 @@
 #include <wx/timer.h>
 #include <wx/toolbar.h>
 
-namespace sdmsg {
+namespace reflash {
 
 class BrowserFrame;
 
@@ -130,4 +130,4 @@ private:
     bool show_user_mounts_dialog();
 };
 
-} /* namespace sdmsg */
+} /* namespace reflash */

@@ -1,23 +1,23 @@
-= sdmsg(1)
-Lenik <sdmsg@bodz.net>
+= reflash(1)
+Lenik <reflash@bodz.net>
 v{project-version}, {project-year}
 :doctype: manpage
 :manmanual: User Commands
-:mansource: sdmsg
+:mansource: reflash
 :man-linkstyle: blue R <>
 :nofooter:
 
 == Name
 
-sdmsg - rewrite device or file data in place (SD massage)
+reflash - rewrite device or file data in place (SD massage)
 
 == Synopsis
 
-*sdmsg* [_OPTION_]... [_DEVICE/FILE_]
+*reflash* [_OPTION_]... [_DEVICE/FILE_]
 
 == Description
 
-*sdmsg* rewrites a block device or regular file *in place* so flash media that
+*reflash* rewrites a block device or regular file *in place* so flash media that
 sits unused does not lose charge and corrupt data.  Each I/O unit is read and
 written back unchanged.  Progress, speed, and ETA go to standard error.
 A wxWidgets UI is available with *--gui* when a display is present; with
@@ -56,7 +56,7 @@ Regular files are opened read/write without truncation.
   `st_blksize`, or 4096).
 
 *-d, --sqlite-db* _FILE_::
-  SQLite management database.  Default: `~/.cache/sdmsg/<name>.sqlite`.
+  SQLite management database.  Default: `~/.cache/reflash/<name>.sqlite`.
 
 *-t, --test*::
   Verify against the database (read + SHA-1); do not rewrite.  Always headless.

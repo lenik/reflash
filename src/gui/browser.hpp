@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -26,7 +26,7 @@
 #include <wx/toolbar.h>
 #include <wx/treectrl.h>
 
-namespace sdmsg {
+namespace reflash {
 
 class BrowserFrame : public wxFrame {
 public:
@@ -179,4 +179,4 @@ private:
     Node *selected_node();
 };
 
-} /* namespace sdmsg */
+} /* namespace reflash */

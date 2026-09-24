@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Lenik <sdmsg@bodz.net>
+ * Copyright (C) 2026 Lenik <reflash@bodz.net>
  *
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-namespace sdmsg {
+namespace reflash {
 
 enum class FsType { Unknown, Fat12, Fat16, Fat32, ExFat, Ntfs, Ext2, Ext3, Ext4 };
 
@@ -42,4 +42,4 @@ FsType detect_fs(Device &dev, std::uint64_t base_offset, std::string *err = null
 /* Scan filesystem at base_offset (0 for whole device/file or partition start). */
 bool scan_filesystem(Device &dev, std::uint64_t base_offset, FsType type, FsScanResult &out);
 
-} /* namespace sdmsg */
+} /* namespace reflash */

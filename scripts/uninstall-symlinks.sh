@@ -5,9 +5,9 @@ datadir="${2:?datadir}"
 mandir="${3:?mandir}"
 
 for p in \
-    "$bindir/sdmsg" \
-    "$mandir/man1/sdmsg.1" \
-    "$datadir/bash-completion/completions/sdmsg"
+    "$bindir/reflash" \
+    "$mandir/man1/reflash.1" \
+    "$datadir/bash-completion/completions/reflash"
 do
     if [ -L "$p" ]; then
         sudo rm -f "$p"

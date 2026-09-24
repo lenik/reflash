@@ -103,7 +103,7 @@ debian/*.debhelper.log
 debian/*.substvars
 debian/.debhelper
 debian/build/
-debian/sdmsg/
+debian/reflash/
 debian/files
 depcomp
 dist/
@@ -129,3 +129,4 @@ v-store
 # Large generated FS images (rebuild with scripts/make-testbases.sh)
 tests/fixtures/testbase.*
 tests/fixtures/testdrive.*
+debian/sdmsg/
